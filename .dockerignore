@@ -1,0 +1,7 @@
+.git
+.venv
+**/__pycache__
+**/*.pyc
+node_modules
+green-cycle-hub/node_modules
+.DS_Store
