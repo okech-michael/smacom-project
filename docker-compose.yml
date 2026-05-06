@@ -3,7 +3,7 @@ version: "3.9"
 services:
   backend:
     build:
-      context: ./smacom-backend
+      context: ./green-cycle-hub/backend
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
