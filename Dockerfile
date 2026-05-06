@@ -14,10 +14,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     shared-mime-info \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+COPY green-cycle-hub/backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY green-cycle-hub/backend .
 
 EXPOSE 8000
 
