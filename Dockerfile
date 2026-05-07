@@ -20,9 +20,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY green-cycle-hub/backend .
 
-# Frontend dist from git (pre-built)
-COPY green-cycle-hub/backend/frontend-dist ./frontend-dist
-
 EXPOSE 8080
 
 CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}"]
