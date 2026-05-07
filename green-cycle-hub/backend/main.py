@@ -51,7 +51,7 @@ def health_check():
     """Health check endpoint"""
     return {"status": "healthy"}
 
-frontend_dist = Path(__file__).resolve().parent.parent / "frontend-dist"
+frontend_dist = Path(__file__).resolve().parent / "frontend-dist"
 if frontend_dist.exists():
     app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
 else:
