@@ -46,23 +46,15 @@ app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
 app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["Notifications"])
 app.include_router(reports.router, prefix="/api/v1/reports", tags=["Reports"])
 
-frontend_dist = Path(__file__).resolve().parent.parent / "frontend-dist"
-if frontend_dist.exists():
-    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
-
-@app.get("/")
-def read_root():
-    """Root endpoint"""
-    return {
-        "message": "SMACOM Backend API",
-        "version": "1.0.0",
-        "status": "running"
-    }
-
 @app.get("/health")
 def health_check():
     """Health check endpoint"""
     return {"status": "healthy"}
+
+# Mount frontend static files last so API routes take precedence
+frontend_dist = Path(__file__).resolve().parent.parent / "frontend-dist"
+if frontend_dist.exists():
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
 
 if __name__ == "__main__":
     uvicorn.run(
