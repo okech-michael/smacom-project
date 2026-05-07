@@ -1,7 +1,4 @@
-FROM node:20-alpine AS frontend-builder
-
-# Install bun
-RUN npm install -g bun
+FROM oven/bun:latest AS frontend-builder
 
 WORKDIR /app/frontend
 
