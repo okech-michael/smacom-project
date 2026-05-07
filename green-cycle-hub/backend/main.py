@@ -3,8 +3,11 @@ SMACOM Backend - Main Application Entry Point
 A waste-to-wealth system connecting waste producers, bio-processors, and farmers
 """
 
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 
 from app.core.config import settings
@@ -42,6 +45,10 @@ app.include_router(payments.router, prefix="/api/v1/payments", tags=["Payments"]
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
 app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["Notifications"])
 app.include_router(reports.router, prefix="/api/v1/reports", tags=["Reports"])
+
+frontend_dist = Path(__file__).resolve().parent.parent / "frontend-dist"
+if frontend_dist.exists():
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
 
 @app.get("/")
 def read_root():
