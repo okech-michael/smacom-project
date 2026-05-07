@@ -1,5 +1,8 @@
 FROM oven/bun:latest AS frontend-builder
 
+# Force rebuild cache invalidation
+ARG BUILD_TIME=unknown
+
 WORKDIR /app/frontend
 
 COPY green-cycle-hub/package*.json ./
