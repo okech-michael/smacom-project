@@ -51,10 +51,21 @@ def health_check():
     """Health check endpoint"""
     return {"status": "healthy"}
 
-# Mount frontend static files last so API routes take precedence
 frontend_dist = Path(__file__).resolve().parent.parent / "frontend-dist"
 if frontend_dist.exists():
     app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
+else:
+    print(f"WARNING: Frontend dist not found at {frontend_dist}")
+
+if not frontend_dist.exists():
+    @app.get("/")
+    def read_root():
+        """Root endpoint"""
+        return {
+            "message": "SMACOM Backend API",
+            "version": "1.0.0",
+            "status": "running"
+        }
 
 if __name__ == "__main__":
     uvicorn.run(
