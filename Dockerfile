@@ -38,7 +38,8 @@ COPY green-cycle-hub/backend/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY green-cycle-hub/backend .
-COPY --from=frontend-builder /app/frontend/dist ./frontend-dist
+# Use pre-built frontend dist from git repo (faster and more reliable than rebuilding)
+COPY green-cycle-hub/backend/frontend-dist ./frontend-dist
 
 EXPOSE 8080
 
