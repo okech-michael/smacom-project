@@ -6,7 +6,13 @@ COPY green-cycle-hub/package*.json ./
 COPY green-cycle-hub/bun.lockb ./
 RUN bun install
 
-COPY green-cycle-hub .
+COPY green-cycle-hub/tsconfig*.json ./
+COPY green-cycle-hub/vite.config.ts ./
+COPY green-cycle-hub/tailwind.config.ts ./
+COPY green-cycle-hub/postcss.config.js ./
+COPY green-cycle-hub/index.html ./
+COPY green-cycle-hub/public ./public/
+COPY green-cycle-hub/src ./src/
 RUN bun run build
 
 FROM python:3.12-slim AS backend
