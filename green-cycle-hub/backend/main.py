@@ -3,6 +3,7 @@ SMACOM Backend - Main Application Entry Point
 A waste-to-wealth system connecting waste producers, bio-processors, and farmers
 """
 
+import os
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -51,26 +52,32 @@ def health_check():
     """Health check endpoint"""
     return {"status": "healthy"}
 
-frontend_dist = Path(__file__).resolve().parent / "frontend-dist"
+# Try to mount frontend static files
+frontend_dist = Path(__file__).resolve().parent.parent.parent / "green-cycle-hub" / "backend" / "frontend-dist"
+if not frontend_dist.exists():
+    frontend_dist = Path(__file__).resolve().parent / "frontend-dist"
+
 if frontend_dist.exists():
     app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
+    print(f"✓ Frontend mounted from {frontend_dist}")
 else:
-    print(f"WARNING: Frontend dist not found at {frontend_dist}")
-
-if not frontend_dist.exists():
+    print(f"⚠ WARNING: Frontend dist not found at {frontend_dist}")
     @app.get("/")
     def read_root():
         """Root endpoint"""
         return {
             "message": "SMACOM Backend API",
             "version": "1.0.0",
-            "status": "running"
+            "status": "running",
+            "frontend_path": str(frontend_dist)
         }
 
 if __name__ == "__main__":
+    debug = os.getenv("DEBUG", "false").lower() == "true" or settings.debug
+    print(f"Starting server with DEBUG={debug}")
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
-        port=8000,
-        reload=settings.debug
+        port=int(os.getenv("PORT", 8080)),
+        reload=debug
     )

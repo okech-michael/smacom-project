@@ -1,24 +1,9 @@
-FROM node:20-alpine AS frontend-builder
-
-WORKDIR /app/frontend
-
-COPY green-cycle-hub/package*.json ./
-COPY green-cycle-hub/bun.lockb ./
-COPY green-cycle-hub/tsconfig*.json ./
-COPY green-cycle-hub/vite.config.ts ./
-COPY green-cycle-hub/tailwind.config.ts ./
-COPY green-cycle-hub/postcss.config.js ./
-COPY green-cycle-hub/index.html ./
-COPY green-cycle-hub/public ./public/
-COPY green-cycle-hub/src ./src/
-
-RUN npm install && npm run build
-
-FROM python:3.12-slim AS backend
+FROM python:3.12-slim
 
 WORKDIR /app
 
 ENV PYTHONUNBUFFERED=1
+ENV DEBUG=true
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -34,7 +19,9 @@ COPY green-cycle-hub/backend/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY green-cycle-hub/backend .
-COPY --from=frontend-builder /app/frontend/dist ./frontend-dist
+
+# Frontend dist from git (pre-built)
+COPY green-cycle-hub/backend/frontend-dist ./frontend-dist
 
 EXPOSE 8080
 
