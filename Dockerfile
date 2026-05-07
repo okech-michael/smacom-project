@@ -1,14 +1,16 @@
 FROM node:20-alpine AS frontend-builder
 
+# Install bun
+RUN npm install -g bun
+
 WORKDIR /app/frontend
 
 COPY green-cycle-hub/package*.json ./
-COPY green-cycle-hub/package-lock.json ./
 COPY green-cycle-hub/bun.lockb ./
-RUN npm ci
+RUN bun install
 
 COPY green-cycle-hub .
-RUN npm run build
+RUN bun run build
 
 FROM python:3.12-slim AS backend
 
