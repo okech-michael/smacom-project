@@ -1,14 +1,9 @@
-FROM oven/bun:latest AS frontend-builder
-
-# Force rebuild cache invalidation
-ARG BUILD_TIME=unknown
+FROM node:20-alpine AS frontend-builder
 
 WORKDIR /app/frontend
 
 COPY green-cycle-hub/package*.json ./
 COPY green-cycle-hub/bun.lockb ./
-RUN bun install
-
 COPY green-cycle-hub/tsconfig*.json ./
 COPY green-cycle-hub/vite.config.ts ./
 COPY green-cycle-hub/tailwind.config.ts ./
@@ -16,7 +11,8 @@ COPY green-cycle-hub/postcss.config.js ./
 COPY green-cycle-hub/index.html ./
 COPY green-cycle-hub/public ./public/
 COPY green-cycle-hub/src ./src/
-RUN bun run build
+
+RUN npm install && npm run build
 
 FROM python:3.12-slim AS backend
 
@@ -38,6 +34,7 @@ COPY green-cycle-hub/backend/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY green-cycle-hub/backend .
+COPY --from=frontend-builder /app/frontend/dist ./frontend-dist
 
 EXPOSE 8080
 
