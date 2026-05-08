@@ -1,4 +1,10 @@
-export const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
+// In production (Docker/Railway), use relative path to nginx proxy
+// In development, use environment variable or default to localhost backend
+export const API_BASE_URL = import.meta.env.VITE_API_URL || (
+  typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
+    ? '/api/v1'  // Use nginx proxy in production
+    : 'http://localhost:8000/api/v1'  // Direct to backend in development
+);
 
 export async function signup(data: {
   email: string;

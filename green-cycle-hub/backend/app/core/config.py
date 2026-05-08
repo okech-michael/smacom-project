@@ -31,12 +31,20 @@ class Settings(BaseSettings):
     debug: bool = False
     environment: str = "development"
     frontend_url: str = "http://localhost:8080"
+    port: int = 8000
 
     model_config = {
         "env_file": ".env",
         "case_sensitive": False,
         "extra": "ignore",
     }
+
+    def get_allowed_origins(self) -> list[str]:
+        """Get allowed origins based on environment"""
+        if self.environment == "production":
+            # In production (Railway), allow requests through nginx proxy
+            return ["*"]  # nginx proxy handles the requests
+        return self.allowed_origins
 
 
 @lru_cache()
