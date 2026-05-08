@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DashboardShell, NavItem } from "@/components/smacom/DashboardShell";
-import { StatusBadge } from "@/components/smacom/StatusBadge";
+import { StatusBadge, Status } from "@/components/smacom/StatusBadge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -125,7 +125,7 @@ export default function ProducerDashboard() {
                   <p className="font-medium">{r.id} · {r.type}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">{r.date} · {r.qty}</p>
                 </div>
-                <StatusBadge status={r.status as any} label={r.label} />
+                <StatusBadge status={r.status as Status} label={r.label} />
               </Card>
             ))}
           </TabsContent>

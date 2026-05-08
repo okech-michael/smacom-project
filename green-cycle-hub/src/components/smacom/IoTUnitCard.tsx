@@ -48,7 +48,7 @@ export function IoTUnitCard({ name, temp, moisture, co2, fill, stage, progress, 
   );
 }
 
-function Reading({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
+function Reading({ icon: Icon, label, value }: { icon: React.ComponentType<{ className?: string }>; label: string; value: string }) {
   return (
     <div className="rounded-md border border-border bg-secondary/40 p-3">
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
