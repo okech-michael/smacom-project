@@ -3,21 +3,74 @@ version: "3.9"
 services:
   backend:
     build:
-      context: ./green-cycle-hub/backend
+      context: ./
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
     environment:
-      - DEBUG=false
-      - ALLOWED_ORIGINS=http://localhost:4173
+      - PORT=8000
+      - DEBUG=${DEBUG:-false}
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-*}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost}
+      # Supabase
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      # MQTT
+      - MQTT_BROKER_HOST=${MQTT_BROKER_HOST:-mqtt}
+      - MQTT_BROKER_PORT=${MQTT_BROKER_PORT:-1883}
+      - MQTT_USERNAME=${MQTT_USERNAME}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
+      # Payment Services
+      - MPESA_CONSUMER_KEY=${MPESA_CONSUMER_KEY}
+      - MPESA_CONSUMER_SECRET=${MPESA_CONSUMER_SECRET}
+      - MPESA_SHORTCODE=${MPESA_SHORTCODE}
+      - MPESA_PASSKEY=${MPESA_PASSKEY}
+      - MPESA_CALLBACK_URL=${MPESA_CALLBACK_URL}
+      - FLUTTERWAVE_SECRET_KEY=${FLUTTERWAVE_SECRET_KEY}
+      - FLUTTERWAVE_WEBHOOK_HASH=${FLUTTERWAVE_WEBHOOK_HASH}
+      # Other Services
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - SENDGRID_FROM_EMAIL=${SENDGRID_FROM_EMAIL:-noreply@smacom.co.ke}
+      - FIREBASE_CREDENTIALS_JSON=${FIREBASE_CREDENTIALS_JSON}
+      - JWT_SECRET=${JWT_SECRET:-changeme}
+    depends_on:
+      - mqtt
     restart: unless-stopped
+    networks:
+      - smacom-network
 
   frontend:
     build:
       context: ./green-cycle-hub
       dockerfile: Dockerfile
     ports:
-      - "4173:80"
+      - "80:80"
     depends_on:
       - backend
     restart: unless-stopped
+    networks:
+      - smacom-network
+
+  mqtt:
+    image: eclipse-mosquitto:2-alpine
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - mqtt_data:/mosquitto/data
+      - mqtt_logs:/mosquitto/log
+    environment:
+      - MOSQ_CONFIG_FILE=/mosquitto/config/mosquitto.conf
+    restart: unless-stopped
+    networks:
+      - smacom-network
+
+volumes:
+  mqtt_data:
+  mqtt_logs:
+
+networks:
+  smacom-network:
+    driver: bridge
