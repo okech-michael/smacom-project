@@ -10,6 +10,8 @@ from app.core.dependencies import get_current_user
 
 router = APIRouter(tags=["Authentication"])
 
+VALID_ROLES = {"producer", "processor", "farmer", "learner", "admin"}
+
 
 class SignupRequest(BaseModel):
     email: EmailStr
@@ -43,8 +45,7 @@ async def signup(payload: SignupRequest, supabase=Depends(get_supabase)):
     """Register a new user account"""
     
     # Validate role
-    valid_roles = ["producer", "processor", "farmer", "learner", "admin"]
-    if payload.role not in valid_roles:
+    if payload.role not in VALID_ROLES:
         raise HTTPException(status_code=400, detail="Invalid role")
     
     # Check if email exists

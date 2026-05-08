@@ -1,7 +1,7 @@
 import { DashboardShell, NavItem } from "@/components/smacom/DashboardShell";
 import { StatCard } from "@/components/smacom/StatCard";
 import { IoTUnitCard } from "@/components/smacom/IoTUnitCard";
-import { StatusBadge } from "@/components/smacom/StatusBadge";
+import { StatusBadge, Status } from "@/components/smacom/StatusBadge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -118,7 +118,7 @@ export default function AdminDashboard() {
                     <TableRow key={i}>
                       <TableCell className="font-medium">{r[0]}</TableCell>
                       <TableCell>{r[1]}</TableCell>
-                      <TableCell><StatusBadge status={r[2] as any} label={r[3]} /></TableCell>
+                      <TableCell><StatusBadge status={r[2] as Status} label={r[3]} /></TableCell>
                       <TableCell>{r[4]}</TableCell>
                       <TableCell className="text-right">
                         <Button variant="ghost" size="sm">Verify</Button>
@@ -157,7 +157,7 @@ export default function AdminDashboard() {
                       <TableCell>{r[2]}</TableCell>
                       <TableCell>{r[3]}</TableCell>
                       <TableCell>{r[4]}</TableCell>
-                      <TableCell><StatusBadge status={r[5] as any} label={r[6]} /></TableCell>
+                      <TableCell><StatusBadge status={r[5] as Status} label={r[6]} /></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

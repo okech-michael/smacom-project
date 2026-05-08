@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 export interface NavItem {
   label: string;
   to: string;
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 interface Props {

@@ -1,6 +1,6 @@
 import { DashboardShell, NavItem } from "@/components/smacom/DashboardShell";
 import { ProductCard } from "@/components/smacom/ProductCard";
-import { StatusBadge } from "@/components/smacom/StatusBadge";
+import { StatusBadge, Status } from "@/components/smacom/StatusBadge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -99,7 +99,7 @@ export default function FarmerDashboard() {
                       <TableCell>{r[2]}</TableCell>
                       <TableCell>{r[3]}</TableCell>
                       <TableCell>
-                        <StatusBadge status={r[4] as any} label={r[4] === "delivered" ? "Delivered" : r[4] === "info" ? "In Transit" : "Pending"} />
+                        <StatusBadge status={r[4] as Status} label={r[4] === "delivered" ? "Delivered" : r[4] === "info" ? "In Transit" : "Pending"} />
                       </TableCell>
                       <TableCell>{r[5]}</TableCell>
                     </TableRow>

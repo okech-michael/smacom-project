@@ -69,9 +69,9 @@ class TestWasteRequests:
     def test_haversine_distance_calculation(self):
         """Two points in Nairobi should be within a few km."""
         from app.api.waste import _haversine_km
-        # Nairobi CBD to Westlands — approx 4–5 km
+        # Nairobi CBD to Westlands — approx 2–3 km
         dist = _haversine_km(-1.2864, 36.8172, -1.2676, 36.8119)
-        assert 3.0 < dist < 7.0
+        assert 2.0 < dist < 3.0
 
     def test_haversine_same_point(self):
         from app.api.waste import _haversine_km
