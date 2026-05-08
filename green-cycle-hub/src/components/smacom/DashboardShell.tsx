@@ -3,7 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Bell, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Logo } from "./Logo";
 import { NotificationPanel } from "./NotificationPanel";
@@ -30,26 +30,27 @@ export function DashboardShell({ role, roleLabel, userName, nav, children }: Pro
   const [notifOpen, setNotifOpen] = useState(false);
 
   const sidebar = (
-    <nav className="flex flex-col gap-1 p-3">
+    <nav className="flex flex-col gap-1 p-3" aria-label="Dashboard navigation">
       {nav.map((item) => {
         const active = pathname === item.to || (item.to !== nav[0].to && pathname.startsWith(item.to));
         return (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end
-            className={({ isActive }) =>
-              cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition",
-                (isActive || active)
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-              )
-            }
-          >
-            <item.icon className="h-4 w-4" />
-            {item.label}
-          </NavLink>
+          <SheetClose asChild key={item.to}>
+            <NavLink
+              to={item.to}
+              end
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition",
+                  (isActive || active)
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                )
+              }
+            >
+              <item.icon className="h-4 w-4" />
+              {item.label}
+            </NavLink>
+          </SheetClose>
         );
       })}
     </nav>
@@ -62,7 +63,7 @@ export function DashboardShell({ role, roleLabel, userName, nav, children }: Pro
           <div className="flex items-center gap-3">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="lg:hidden">
+                <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open navigation menu">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
@@ -110,11 +111,19 @@ export function DashboardShell({ role, roleLabel, userName, nav, children }: Pro
 
       {/* Mobile bottom tab bar */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card">
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4">
           {nav.slice(0, 4).map((item) => {
             const active = pathname === item.to;
             return (
-              <Link key={item.to} to={item.to} className={cn("flex flex-col items-center gap-1 py-2.5 text-xs", active ? "text-primary" : "text-muted-foreground")}>
+              <Link
+                key={item.to}
+                to={item.to}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-1 py-2.5 text-xs",
+                  active ? "text-primary" : "text-muted-foreground"
+                )}
+                aria-label={item.label}
+              >
                 <item.icon className="h-5 w-5" />
                 <span className="truncate max-w-[64px]">{item.label}</span>
               </Link>
