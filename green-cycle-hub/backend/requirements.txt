@@ -14,12 +14,7 @@ requests
 sqlalchemy
 alembic
 firebase-admin
-mpesa-python-sdk
 sendgrid
-numpy
-pandas
-scikit-learn
-tensorflow
 aiomqtt
 apscheduler
 httpx
