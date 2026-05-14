@@ -106,26 +106,33 @@ export function DashboardShell({ role, roleLabel, userName, nav, children }: Pro
         <aside className="hidden lg:block w-64 shrink-0 border-r border-border min-h-[calc(100vh-4rem)] bg-card">
           {sidebar}
         </aside>
-        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">{children}</main>
+        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 pb-20 lg:pb-8">{children}</main>
       </div>
 
-      {/* Mobile bottom tab bar */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card">
-        <div className="grid grid-cols-2 sm:grid-cols-4">
-          {nav.slice(0, 4).map((item) => {
-            const active = pathname === item.to;
+      {/* Mobile bottom tab bar - improved for better mobile UX */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+        <div className="grid grid-cols-4 sm:grid-cols-5">
+          {nav.slice(0, 5).map((item, index) => {
+            const active = pathname === item.to || (item.to !== nav[0].to && pathname.startsWith(item.to));
+            const isOverflow = index === 4 && nav.length > 5;
             return (
               <Link
                 key={item.to}
                 to={item.to}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-1 py-2.5 text-xs",
-                  active ? "text-primary" : "text-muted-foreground"
+                  "flex flex-col items-center justify-center gap-1 py-3 px-1 text-xs font-medium transition-colors",
+                  active ? "text-primary" : "text-muted-foreground hover:text-foreground",
+                  isOverflow && "relative"
                 )}
                 aria-label={item.label}
               >
-                <item.icon className="h-5 w-5" />
-                <span className="truncate max-w-[64px]">{item.label}</span>
+                <item.icon className={cn("h-5 w-5", active && "scale-110 transition-transform")} />
+                <span className="truncate max-w-full text-center leading-tight">{item.label}</span>
+                {isOverflow && nav.length > 5 && (
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center font-bold">
+                    +{nav.length - 4}
+                  </span>
+                )}
               </Link>
             );
           })}

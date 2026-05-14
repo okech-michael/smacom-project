@@ -5,7 +5,7 @@ export function Logo({ className, to = "/" }: { className?: string; to?: string 
   return (
     <Link to={to} className={cn("inline-flex items-center gap-3 font-bold tracking-tight", className)}>
       <img
-        src="/waste-to-wealth-logo.svg"
+        src="/logo.jpg"
         alt="Waste to Wealth Clean Solutions logo"
         className="h-12 w-auto"
       />
