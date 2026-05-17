@@ -3,8 +3,8 @@ from functools import lru_cache
 
 
 class Settings(BaseSettings):
-        google_client_id: str = ""
-        google_client_secret: str = ""
+    google_client_id: str = ""
+    google_client_secret: str = ""
     supabase_url: str = ""
     supabase_service_role_key: str = ""
     supabase_anon_key: str = ""
