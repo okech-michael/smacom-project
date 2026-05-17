@@ -86,12 +86,21 @@ export default function Register() {
               <p className="text-sm text-muted-foreground mt-1">Tell us a bit about yourself.</p>
               <Button
                 variant="outline"
-                className="w-full mb-6"
+                className="w-full mb-2"
                 onClick={() => {
                   window.location.href = `${API_BASE_URL}/auth/oauth/google?redirect_to=${encodeURIComponent(window.location.origin)}`;
                 }}
               >
                 Continue with Google
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full mb-6"
+                onClick={() => {
+                  window.location.href = `${API_BASE_URL}/auth/oauth/facebook?redirect_to=${encodeURIComponent(window.location.origin)}`;
+                }}
+              >
+                Continue with Facebook
               </Button>
               {error && (
                 <div className="mt-4 p-3 bg-destructive/10 text-destructive text-sm rounded-md flex gap-2">

@@ -4,7 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { BookOpen, GraduationCap, Award, LifeBuoy, Play, Check } from "lucide-react";
-import { COURSES } from "@/lib/mock-data";
+import { useEffect, useState } from "react";
+import { API_BASE_URL } from "@/lib/api";
 import { Logo } from "@/components/smacom/Logo";
 
 const NAV: NavItem[] = [
@@ -15,6 +16,28 @@ const NAV: NavItem[] = [
 ];
 
 export default function LearnerDashboard() {
+  const [courses, setCourses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchCourses() {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`${API_BASE_URL}/learning/courses`);
+        if (!res.ok) throw new Error("Failed to fetch courses");
+        const data = await res.json();
+        setCourses(data.data || []);
+      } catch (err: any) {
+        setError(err.message || "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchCourses();
+  }, []);
+
   return (
     <DashboardShell role="learner" roleLabel="Learner" userName="Brian Mutua" nav={NAV}>
       <div className="space-y-6">
@@ -32,19 +55,28 @@ export default function LearnerDashboard() {
           </TabsList>
 
           <TabsContent value="catalogue" className="mt-6">
-            <div className="grid md:grid-cols-3 gap-5">
-              {COURSES.map((c) => (<CourseCard key={c.title} {...c} />))}
-            </div>
+            {loading ? (
+              <div>Loading courses...</div>
+            ) : error ? (
+              <div className="text-red-500">{error}</div>
+            ) : (
+              <div className="grid md:grid-cols-3 gap-5">
+                {courses.map((c) => (
+                  <CourseCard key={c.id || c.title} {...c} />
+                ))}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="mine" className="mt-6">
             <div className="grid md:grid-cols-3 gap-5">
-              <CourseCard {...COURSES[0]} ctaLabel="Access course" progress={45} />
-              <CourseCard {...COURSES[1]} ctaLabel="Access course" progress={80} />
-              <CourseCard {...COURSES[2]} ctaLabel="Access course" progress={20} />
+              {courses.slice(0, 3).map((c, i) => (
+                <CourseCard key={c.id || c.title} {...c} ctaLabel="Access course" progress={i === 0 ? 45 : i === 1 ? 80 : 20} />
+              ))}
             </div>
           </TabsContent>
 
+          {/* The rest of the tabs remain unchanged */}
           <TabsContent value="player" className="mt-6">
             <div className="grid lg:grid-cols-3 gap-5">
               <div className="lg:col-span-2 space-y-3">

@@ -33,9 +33,30 @@ export const PRODUCTS = [
 ];
 
 export const COURSES = [
-  { title: "Composting Fundamentals", instructor: "Dr. Amina Waweru", duration: "6 hours", fee: "KES 2,500", modules: 8 },
-  { title: "Anaerobic Digestion 101", instructor: "John Kamau", duration: "4 hours", fee: "KES 1,800", modules: 6 },
-  { title: "Waste Sorting Best Practices", instructor: "Sarah Otieno", duration: "3 hours", fee: "KES 1,200", modules: 5 },
+  {
+    title: "Composting Fundamentals",
+    instructor: "Dr. Amina Waweru",
+    duration: "6 hours",
+    fee: "KES 2,500",
+    modules: 8,
+    youtube_url: "https://www.youtube.com/embed/7GgiVfHkQdA" // Example: Composting basics
+  },
+  {
+    title: "Anaerobic Digestion 101",
+    instructor: "John Kamau",
+    duration: "4 hours",
+    fee: "KES 1,800",
+    modules: 6,
+    youtube_url: "https://www.youtube.com/embed/1w2KQbKpKqA" // Example: Anaerobic digestion
+  },
+  {
+    title: "Waste Sorting Best Practices",
+    instructor: "Sarah Otieno",
+    duration: "3 hours",
+    fee: "KES 1,200",
+    modules: 5,
+    youtube_url: "https://www.youtube.com/embed/2R7h6u5Q2vA" // Example: Waste sorting
+  },
 ];
 
 export const PRODUCTION_TREND = [
