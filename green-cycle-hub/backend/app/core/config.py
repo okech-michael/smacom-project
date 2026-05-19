@@ -2,6 +2,7 @@ from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 
+
 class Settings(BaseSettings):
     google_client_id: str = ""
     google_client_secret: str = ""
