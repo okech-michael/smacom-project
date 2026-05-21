@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     firebase_credentials_json: str = ""
 
     jwt_secret: str = "changeme"
-    allowed_origins: list[str] = ["*"]
+    allowed_origins: list[str] = ["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:3000", "http://localhost:8000", "http://localhost:8080"]
     debug: bool = False
     environment: str = "development"
     frontend_url: str = "http://localhost:8080"
@@ -45,8 +45,9 @@ class Settings(BaseSettings):
     def get_allowed_origins(self) -> list[str]:
         """Get allowed origins based on environment"""
         if self.environment == "production":
-            # In production (Railway), allow requests through nginx proxy
-            return ["*"]  # nginx proxy handles the requests
+            # In production (Railway), allow all origins through nginx proxy
+            return ["*"]
+        # In development, return specific allowed origins
         return self.allowed_origins
 
 
