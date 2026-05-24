@@ -1,0 +1,46 @@
+# Vercel ignore file - specifies files not to deploy
+
+node_modules/
+.git/
+.gitignore
+.env
+.env.*.local
+.env.local
+.DS_Store
+*.log
+*.md
+
+# Railway/Docker files (not needed for Vercel)
+docker-compose.yml
+Dockerfile
+railway.json
+RAILWAY_DEPLOYMENT.md
+
+# Development files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.pytest_cache
+.venv
+venv/
+
+# Build artifacts
+dist/
+build/
+.next/
+
+# Test files
+coverage/
+.nyc_output/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Temporary files
+*.tmp
+.DS_Store
+

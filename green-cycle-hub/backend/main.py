@@ -1,6 +1,8 @@
 """
 SMACOM Backend - Main Application Entry Point
 A waste-to-wealth system connecting waste producers, bio-processors, and farmers
+
+VERCEL EDITION: IoT/MQTT features temporarily disabled
 """
 
 import os
@@ -15,33 +17,34 @@ import uvicorn
 from app.core.config import settings
 from app.api import (
     auth, users, waste, processor, farmer, marketplace,
-    iot, learning, payments, admin, notifications, reports
+    learning, payments, admin, notifications, reports
 )
+# iot module is disabled for Vercel serverless deployment
 
 # Initialize FastAPI app
 app = FastAPI(
     title="SMACOM Backend API",
-    description="Waste-to-Wealth System API",
+    description="Waste-to-Wealth System API (Vercel Edition)",
     version="1.0.0"
 )
 
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins,
+    allow_origins=["*"],  # Vercel frontend will call from same domain
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include API routers
+# Include API routers (excluding IoT which requires MQTT)
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["Users"])
 app.include_router(waste.router, prefix="/api/v1/waste", tags=["Waste Management"])
 app.include_router(processor.router, prefix="/api/v1/processors", tags=["Bio-Processors"])
 app.include_router(farmer.router, prefix="/api/v1/farmers", tags=["Farmers"])
 app.include_router(marketplace.router, prefix="/api/v1/marketplace", tags=["Marketplace"])
-app.include_router(iot.router, prefix="/api/v1/iot", tags=["IoT Sensors"])
+# app.include_router(iot.router, prefix="/api/v1/iot", tags=["IoT Sensors"])  # DISABLED
 app.include_router(learning.router, prefix="/api/v1/learning", tags=["Learning Center"])
 app.include_router(payments.router, prefix="/api/v1/payments", tags=["Payments"])
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
@@ -51,7 +54,16 @@ app.include_router(reports.router, prefix="/api/v1/reports", tags=["Reports"])
 @app.get("/health")
 def health_check():
     """Health check endpoint"""
-    return {"status": "healthy"}
+    return {"status": "healthy", "environment": settings.environment}
+
+@app.get("/api/v1/iot/status")
+def iot_disabled():
+    """IoT endpoint - temporarily disabled on Vercel"""
+    return {
+        "status": "disabled",
+        "message": "IoT/MQTT features are temporarily disabled on Vercel. Will be available on Railway.",
+        "note": "Real-time IoT features require persistent connections and will be migrated to Railway."
+    }
 
 # Try to mount frontend static files from multiple locations
 frontend_paths = [

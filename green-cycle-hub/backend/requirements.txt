@@ -4,7 +4,6 @@ pydantic[email]
 pydantic-settings
 python-dotenv
 supabase
-paho-mqtt
 python-jose[cryptography]
 passlib[bcrypt]
 python-multipart
@@ -15,8 +14,6 @@ sqlalchemy
 alembic
 firebase-admin
 sendgrid
-aiomqtt
-apscheduler
 httpx
 pyotp
 qrcode[pil]

@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "buildCommand": "cd green-cycle-hub && npm install --legacy-peer-deps && npm run build",
+  "installCommand": "pip install -r requirements.txt && cd green-cycle-hub && npm install --legacy-peer-deps",
   "builds": [
     {
       "src": "green-cycle-hub/package.json",
@@ -7,12 +9,37 @@
       "config": {
         "distDir": "dist"
       }
+    },
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": {
+        "pythonVersion": "3.11"
+      }
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
-  ]
+  ],
+  "env": {
+    "ENVIRONMENT": "production",
+    "JWT_SECRET": "@JWT_SECRET",
+    "SUPABASE_URL": "@SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY": "@SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_ANON_KEY": "@SUPABASE_ANON_KEY",
+    "MPESA_CONSUMER_KEY": "@MPESA_CONSUMER_KEY",
+    "MPESA_CONSUMER_SECRET": "@MPESA_CONSUMER_SECRET",
+    "MPESA_SHORTCODE": "@MPESA_SHORTCODE",
+    "MPESA_PASSKEY": "@MPESA_PASSKEY",
+    "FLUTTERWAVE_SECRET_KEY": "@FLUTTERWAVE_SECRET_KEY",
+    "SENDGRID_API_KEY": "@SENDGRID_API_KEY",
+    "SENDGRID_FROM_EMAIL": "@SENDGRID_FROM_EMAIL"
+  }
 }

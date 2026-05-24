@@ -2,19 +2,18 @@ from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 
-
 class Settings(BaseSettings):
+    # Authentication
     google_client_id: str = ""
     google_client_secret: str = ""
+    jwt_secret: str = "changeme"
+    
+    # Database
     supabase_url: str = ""
     supabase_service_role_key: str = ""
     supabase_anon_key: str = ""
 
-    mqtt_broker_host: str = "localhost"
-    mqtt_broker_port: int = 1883
-    mqtt_username: str = ""
-    mqtt_password: str = ""
-
+    # Payments
     mpesa_consumer_key: str = ""
     mpesa_consumer_secret: str = ""
     mpesa_shortcode: str = ""
@@ -24,17 +23,37 @@ class Settings(BaseSettings):
     flutterwave_secret_key: str = ""
     flutterwave_webhook_hash: str = ""
 
+    # Email
     sendgrid_api_key: str = ""
     sendgrid_from_email: str = "noreply@smacom.co.ke"
 
+    # Firebase (optional)
     firebase_credentials_json: str = ""
 
-    jwt_secret: str = "changeme"
-    allowed_origins: list[str] = ["http://localhost:5173", "http://localhost:5174", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:5174", "http://127.0.0.1:3000", "http://localhost:8000", "http://localhost:8080"]
+    # Application Settings
     debug: bool = False
     environment: str = "development"
-    frontend_url: str = "http://localhost:8080"
+    frontend_url: str = "http://localhost:3000"
     port: int = 8000
+    
+    # CORS
+    allowed_origins: list[str] = [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:5174",
+        "http://127.0.0.1:3000",
+        "http://localhost:8000",
+    ]
+
+    # MQTT/IoT - DISABLED FOR VERCEL
+    # These features will be re-enabled when backend moves to Railway
+    mqtt_enabled: bool = False
+    mqtt_broker_host: str = "disabled"
+    mqtt_broker_port: int = 1883
+    mqtt_username: str = ""
+    mqtt_password: str = ""
 
     model_config = {
         "env_file": ".env",
@@ -43,11 +62,9 @@ class Settings(BaseSettings):
     }
 
     def get_allowed_origins(self) -> list[str]:
-        """Get allowed origins based on environment"""
+        """Get allowed origins for CORS"""
         if self.environment == "production":
-            # In production (Railway), allow all origins through nginx proxy
-            return ["*"]
-        # In development, return specific allowed origins
+            return ["*"]  # Vercel frontend will access from same domain
         return self.allowed_origins
 
 
