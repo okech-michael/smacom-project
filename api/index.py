@@ -70,31 +70,59 @@ def iot_disabled():
     }
 
 # Serve static frontend files (built React/Vite app)
-frontend_dist_path = Path(__file__).parent.parent / "green-cycle-hub" / "dist"
+# Try multiple possible paths for the frontend dist
+possible_paths = [
+    Path(__file__).parent.parent / "green-cycle-hub" / "dist",
+    Path("/var/task/green-cycle-hub/dist"),
+    Path(__file__).parent / "frontend-dist",
+]
 
-if frontend_dist_path.exists():
-    # Mount static files for assets
-    app.mount("/assets", StaticFiles(directory=str(frontend_dist_path / "assets")), name="assets")
-    
-    # Serve index.html for SPA routing
-    @app.get("/{full_path:path}")
-    async def serve_frontend(full_path: str):
-        """Serve frontend files or index.html for SPA routing"""
-        # Don't serve for API routes (already handled above)
-        if full_path.startswith("api/"):
-            return {"error": "Not Found"}, 404
-        
-        # Try to serve the actual file
-        file_path = frontend_dist_path / full_path
-        if file_path.exists() and file_path.is_file():
-            return FileResponse(file_path)
-        
-        # Fall back to index.html for SPA routing
+frontend_dist_path = None
+for path in possible_paths:
+    if path.exists() and (path / "index.html").exists():
+        frontend_dist_path = path
+        print(f"Frontend dist found at: {frontend_dist_path}")
+        break
+
+if frontend_dist_path:
+    # Mount static assets
+    try:
+        assets_path = frontend_dist_path / "assets"
+        if assets_path.exists():
+            app.mount("/assets", StaticFiles(directory=str(assets_path)), name="assets")
+    except Exception as e:
+        print(f"Warning: Could not mount assets: {e}")
+
+@app.get("/")
+def serve_root():
+    """Serve root index.html"""
+    if frontend_dist_path:
         index_path = frontend_dist_path / "index.html"
         if index_path.exists():
             return FileResponse(index_path)
-        
-        return {"error": "Frontend not built. Run: cd green-cycle-hub && npm run build"}, 503
+    return {"detail": "Frontend not available"}
+
+@app.get("/{full_path:path}")
+async def serve_frontend(full_path: str):
+    """Serve frontend files or index.html for SPA routing"""
+    # Don't serve for API routes (already handled above)
+    if full_path.startswith("api/"):
+        return {"detail": "Not Found"}, 404
+    
+    if not frontend_dist_path:
+        return {"detail": "Frontend not built"}, 503
+    
+    # Try to serve the actual file
+    file_path = frontend_dist_path / full_path
+    if file_path.exists() and file_path.is_file():
+        return FileResponse(file_path)
+    
+    # Fall back to index.html for SPA routing
+    index_path = frontend_dist_path / "index.html"
+    if index_path.exists():
+        return FileResponse(index_path)
+    
+    return {"detail": "Not Found"}, 404
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
