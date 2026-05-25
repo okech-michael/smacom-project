@@ -87,6 +87,12 @@ for path in frontend_paths:
 if not frontend_dist:
     print(f"⚠ WARNING: Frontend dist not found in any expected location")
     print(f"  Checked: {frontend_paths}")
+    # List contents of parent directory to debug
+    parent_dir = Path(__file__).parent.parent
+    print(f"  Contents of {parent_dir}:")
+    if parent_dir.exists():
+        for item in parent_dir.iterdir():
+            print(f"    - {item.name}/ " if item.is_dir() else f"    - {item.name}")
     frontend_dist = frontend_paths[0]  # Use primary path as fallback
 
 @app.get("/")
