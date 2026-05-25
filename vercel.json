@@ -1,14 +1,15 @@
 {
   "version": 2,
   "installCommand": "pip install -r requirements.txt && cd green-cycle-hub && npm install --legacy-peer-deps",
-  "buildCommand": "cd green-cycle-hub && npm run build && cp -r dist backend/dist && cp -r dist ../frontend-dist",
+  "buildCommand": "cd green-cycle-hub && npm run build",
   "builds": [
     {
       "src": "api/index.py",
       "use": "@vercel/python",
       "config": {
         "pythonVersion": "3.11",
-        "requirementsFile": "requirements.txt"
+        "requirementsFile": "requirements.txt",
+        "maxLambdaSize": "250mb"
       }
     }
   ],

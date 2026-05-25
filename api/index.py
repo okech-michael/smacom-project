@@ -70,18 +70,45 @@ def iot_disabled():
     }
 
 # Serve static frontend files from the built React/Vite app
-frontend_dist = Path(__file__).parent.parent / "green-cycle-hub" / "dist"
+# Check multiple possible locations for frontend dist
+frontend_paths = [
+    Path(__file__).parent.parent / "green-cycle-hub" / "dist",  # Vercel build location
+    Path(__file__).parent.parent / "frontend" / "dist",  # Fallback if restructured
+    Path(__file__).parent.parent / "dist",  # Root level fallback
+]
+
+frontend_dist = None
+for path in frontend_paths:
+    if path.exists():
+        frontend_dist = path
+        print(f"✓ Frontend dist found at: {path}")
+        break
+
+if not frontend_dist:
+    print(f"⚠ WARNING: Frontend dist not found in any expected location")
+    print(f"  Checked: {frontend_paths}")
+    frontend_dist = frontend_paths[0]  # Use primary path as fallback
 
 @app.get("/")
 def serve_root():
     """Serve root index.html"""
+    if not frontend_dist or not frontend_dist.exists():
+        return {
+            "status": "error",
+            "message": "Frontend dist not found",
+            "path": str(frontend_dist),
+            "debug": "Vercel serverless: Make sure npm build creates dist folder in green-cycle-hub",
+            "hint": "Check Vercel build logs at https://vercel.com/dashboard"
+        }, 503
+    
     index_path = frontend_dist / "index.html"
     if index_path.exists():
         return FileResponse(str(index_path), media_type="text/html")
+    
     return {
         "status": "error",
-        "message": "Frontend dist not found",
-        "path": str(frontend_dist)
+        "message": "index.html not found in dist",
+        "path": str(index_path)
     }, 503
 
 @app.get("/{full_path:path}")
