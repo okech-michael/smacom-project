@@ -69,58 +69,37 @@ def iot_disabled():
         "note": "Real-time IoT features require persistent connections and will be migrated to Railway."
     }
 
-# Serve static frontend files (built React/Vite app)
-# Try multiple possible paths for the frontend dist
-possible_paths = [
-    Path(__file__).parent.parent / "green-cycle-hub" / "dist",
-    Path("/var/task/green-cycle-hub/dist"),
-    Path(__file__).parent / "frontend-dist",
-]
-
-frontend_dist_path = None
-for path in possible_paths:
-    if path.exists() and (path / "index.html").exists():
-        frontend_dist_path = path
-        print(f"Frontend dist found at: {frontend_dist_path}")
-        break
-
-if frontend_dist_path:
-    # Mount static assets
-    try:
-        assets_path = frontend_dist_path / "assets"
-        if assets_path.exists():
-            app.mount("/assets", StaticFiles(directory=str(assets_path)), name="assets")
-    except Exception as e:
-        print(f"Warning: Could not mount assets: {e}")
+# Serve static frontend files from the built React/Vite app
+frontend_dist = Path(__file__).parent.parent / "green-cycle-hub" / "dist"
 
 @app.get("/")
 def serve_root():
     """Serve root index.html"""
-    if frontend_dist_path:
-        index_path = frontend_dist_path / "index.html"
-        if index_path.exists():
-            return FileResponse(index_path)
-    return {"detail": "Frontend not available"}
+    index_path = frontend_dist / "index.html"
+    if index_path.exists():
+        return FileResponse(str(index_path), media_type="text/html")
+    return {
+        "status": "error",
+        "message": "Frontend dist not found",
+        "path": str(frontend_dist)
+    }, 503
 
 @app.get("/{full_path:path}")
-async def serve_frontend(full_path: str):
-    """Serve frontend files or index.html for SPA routing"""
-    # Don't serve for API routes (already handled above)
+async def serve_spa(full_path: str):
+    """Serve SPA - return index.html for all non-API routes"""
+    # Skip API routes
     if full_path.startswith("api/"):
         return {"detail": "Not Found"}, 404
     
-    if not frontend_dist_path:
-        return {"detail": "Frontend not built"}, 503
+    # Try to serve file directly (for assets, etc)
+    file_path = frontend_dist / full_path
+    if file_path.exists() and file_path.is_file() and file_path.stat().st_size > 0:
+        return FileResponse(str(file_path))
     
-    # Try to serve the actual file
-    file_path = frontend_dist_path / full_path
-    if file_path.exists() and file_path.is_file():
-        return FileResponse(file_path)
-    
-    # Fall back to index.html for SPA routing
-    index_path = frontend_dist_path / "index.html"
+    # Default to index.html for SPA routing
+    index_path = frontend_dist / "index.html"
     if index_path.exists():
-        return FileResponse(index_path)
+        return FileResponse(str(index_path), media_type="text/html")
     
     return {"detail": "Not Found"}, 404
 
