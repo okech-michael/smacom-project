@@ -546,7 +546,7 @@ export default function Landing() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
             <SectionHeader eyebrow="Learning Platform" title="Waste management training & certifications" />
             <Button asChild variant="outline" className="border-white/10 text-white/60 hover:text-white hover:bg-white/5 shrink-0">
-              <Link to="/learning">Browse courses <ArrowRight className="h-4 w-4 ml-2" /></Link>
+              <Link to="/dashboard/learner">Browse courses <ArrowRight className="h-4 w-4 ml-2" /></Link>
             </Button>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
