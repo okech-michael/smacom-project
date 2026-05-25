@@ -1,3 +1,4 @@
+import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from app.core.config import settings
@@ -34,10 +35,11 @@ async def send_welcome_email(email: str, full_name: str):
 
 
 async def send_account_verified_email(email: str, full_name: str):
+    frontend_url = os.getenv("FRONTEND_URL", "https://smacom.io")
     _send(email, "Your SMACOM Account Has Been Verified", f"""
     <h2>Great news, {full_name}!</h2>
     <p>Your SMACOM account has been verified. You can now log in and access all platform features.</p>
-    <p><a href="https://smacom.co.ke/login">Login to SMACOM</a></p>
+    <p><a href="{frontend_url}/login">Login to SMACOM</a></p>
     """)
 
 
@@ -79,10 +81,11 @@ async def send_payout_disbursed_email(email: str, full_name: str, amount: float)
 
 
 async def send_enrolment_confirmation_email(email: str, full_name: str, course_title: str):
+    frontend_url = os.getenv("FRONTEND_URL", "https://smacom.io")
     _send(email, f"Enrolled: {course_title}", f"""
     <h2>Hello {full_name},</h2>
     <p>You have been successfully enrolled in <strong>{course_title}</strong>. Happy learning!</p>
-    <p><a href="https://smacom.co.ke/learning">Go to your courses</a></p>
+    <p><a href="{frontend_url}/learning">Go to your courses</a></p>
     """)
 
 

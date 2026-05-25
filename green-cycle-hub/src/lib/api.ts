@@ -1,9 +1,10 @@
-// In production (Docker/Railway), use relative path to nginx proxy
-// In development, use environment variable or default to localhost backend
+// On Vercel: Frontend and backend are on same domain
+// Frontend served from root (/), API from /api/v1
+// VITE_API_URL must be explicitly set for production builds on Vercel
 export const API_BASE_URL = import.meta.env.VITE_API_URL || (
-  typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
-    ? '/api/v1'  // Use nginx proxy in production
-    : 'http://localhost:8080/api/v1'  // Direct to backend in development
+  typeof window !== 'undefined' && window.location.hostname === 'localhost'
+    ? 'http://localhost:8080/api/v1'  // Local development
+    : '/api/v1'  // Production - same domain, use relative path
 );
 
 export async function signup(data: {

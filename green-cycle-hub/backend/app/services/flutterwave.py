@@ -1,3 +1,4 @@
+import os
 import httpx
 from app.core.config import settings
 
@@ -6,6 +7,9 @@ FLUTTERWAVE_BASE = "https://api.flutterwave.com/v3"
 
 async def initiate_payment(amount: float, email: str, name: str, reference: str) -> str:
     """Create a Flutterwave payment link and return the hosted URL."""
+    frontend_url = os.getenv("FRONTEND_URL", "https://smacom.io")
+    callback_url = f"{frontend_url}/payment/callback"
+    
     async with httpx.AsyncClient() as client:
         resp = await client.post(
             f"{FLUTTERWAVE_BASE}/payments",
@@ -13,7 +17,7 @@ async def initiate_payment(amount: float, email: str, name: str, reference: str)
                 "tx_ref": reference,
                 "amount": amount,
                 "currency": "KES",
-                "redirect_url": "https://smacom.co.ke/payment/callback",
+                "redirect_url": callback_url,
                 "customer": {"email": email, "name": name},
                 "customizations": {
                     "title": "SMACOM Solutions",

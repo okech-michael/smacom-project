@@ -1,3 +1,4 @@
+import os
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 
@@ -6,7 +7,7 @@ class Settings(BaseSettings):
     # Authentication
     google_client_id: str = ""
     google_client_secret: str = ""
-    jwt_secret: str = "changeme"
+    jwt_secret: str = ""  # MUST be set via environment variable
     
     # Database
     supabase_url: str = ""
@@ -25,7 +26,7 @@ class Settings(BaseSettings):
 
     # Email
     sendgrid_api_key: str = ""
-    sendgrid_from_email: str = "noreply@smacom.co.ke"
+    sendgrid_from_email: str = "noreply@smacom.io"
 
     # Firebase (optional)
     firebase_credentials_json: str = ""
@@ -64,7 +65,11 @@ class Settings(BaseSettings):
     def get_allowed_origins(self) -> list[str]:
         """Get allowed origins for CORS"""
         if self.environment == "production":
-            return ["*"]  # Vercel frontend will access from same domain
+            # In production on Vercel, frontend and backend share same domain
+            # Frontend served from root (/), API from /api/v1
+            # Must set FRONTEND_URL environment variable
+            frontend_url = os.getenv("FRONTEND_URL", "https://smacom.vercel.app")
+            return [frontend_url, frontend_url.replace("https://", "https://www.")]
         return self.allowed_origins
 
 

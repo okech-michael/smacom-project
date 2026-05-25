@@ -8,9 +8,19 @@ import sys
 from pathlib import Path
 
 # Add the backend module to Python path for imports
+# On Vercel: __file__ = /var/task/api/index.py
+# Backend is at: /var/task/green-cycle-hub/backend
 backend_path = os.path.join(os.path.dirname(__file__), '..', 'green-cycle-hub', 'backend')
+backend_path = os.path.abspath(backend_path)
+
 if backend_path not in sys.path:
     sys.path.insert(0, backend_path)
+
+# Verify the path exists
+if not os.path.exists(backend_path):
+    print(f"⚠️  Warning: Backend path not found: {backend_path}")
+else:
+    print(f"✓ Backend path added: {backend_path}")
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
