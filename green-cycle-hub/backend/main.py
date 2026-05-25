@@ -67,8 +67,10 @@ def iot_disabled():
 
 # Try to mount frontend static files from multiple locations
 frontend_paths = [
-    Path(__file__).resolve().parent / "frontend-dist",
-    Path(__file__).resolve().parent.parent.parent / "frontend-dist",
+    Path(__file__).resolve().parent / "dist",  # dist in backend folder
+    Path(__file__).resolve().parent.parent / "dist",  # dist in green-cycle-hub folder (Vercel build output)
+    Path(__file__).resolve().parent / "frontend-dist",  # Local development
+    Path(__file__).resolve().parent.parent.parent / "frontend-dist",  # Root level
 ]
 
 frontend_mounted = False
