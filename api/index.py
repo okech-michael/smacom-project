@@ -4,7 +4,14 @@ Full-stack deployment on Vercel (temporary - without IoT/MQTT features)
 """
 
 import os
+import sys
 from pathlib import Path
+
+# Add the backend module to Python path for imports
+backend_path = os.path.join(os.path.dirname(__file__), '..', 'green-cycle-hub', 'backend')
+if backend_path not in sys.path:
+    sys.path.insert(0, backend_path)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
