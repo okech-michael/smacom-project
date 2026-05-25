@@ -5,7 +5,7 @@ A waste-to-wealth system connecting waste producers, bio-processors, and farmers
 ## Project Structure
 
 ```
-smacom-backend/
+backend/
 ├── main.py                 # FastAPI application entry point
 ├── requirements.txt        # Python dependencies
 ├── .env                   # Environment variables

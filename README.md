@@ -403,7 +403,7 @@ For issues, open a GitHub issue with:
 ### Backend
 
 ```powershell
-cd smacom-backend
+cd green-cycle-hub/backend
 python -m pip install -r requirements.txt
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
@@ -418,5 +418,5 @@ npm run build
 
 ## Notes
 
-- Ensure `smacom-backend/.env` is present before starting the backend.
+- Ensure `green-cycle-hub/backend/.env` is present before starting the backend.
 - If you deploy frontend and backend separately, point the frontend API requests to your backend URL and update `ALLOWED_ORIGINS` accordingly.
