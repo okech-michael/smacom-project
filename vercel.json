@@ -4,13 +4,6 @@
   "installCommand": "pip install -r requirements.txt && cd green-cycle-hub && npm install --legacy-peer-deps",
   "builds": [
     {
-      "src": "green-cycle-hub/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    },
-    {
       "src": "api/index.py",
       "use": "@vercel/python",
       "config": {
@@ -20,12 +13,11 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/index.py"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/api/index.py"
     }
-  ]
+  ],
+  "env": {
+    "PYTHONUNBUFFERED": "1"
+  }
 }

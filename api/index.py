@@ -7,6 +7,8 @@ import os
 from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 import uvicorn
 
 from app.core.config import settings
@@ -59,6 +61,33 @@ def iot_disabled():
         "message": "IoT/MQTT features are temporarily disabled on Vercel. Will be available on Railway.",
         "note": "Real-time IoT features require persistent connections and will be migrated to Railway."
     }
+
+# Serve static frontend files (built React/Vite app)
+frontend_dist_path = Path(__file__).parent.parent / "green-cycle-hub" / "dist"
+
+if frontend_dist_path.exists():
+    # Mount static files for assets
+    app.mount("/assets", StaticFiles(directory=str(frontend_dist_path / "assets")), name="assets")
+    
+    # Serve index.html for SPA routing
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        """Serve frontend files or index.html for SPA routing"""
+        # Don't serve for API routes (already handled above)
+        if full_path.startswith("api/"):
+            return {"error": "Not Found"}, 404
+        
+        # Try to serve the actual file
+        file_path = frontend_dist_path / full_path
+        if file_path.exists() and file_path.is_file():
+            return FileResponse(file_path)
+        
+        # Fall back to index.html for SPA routing
+        index_path = frontend_dist_path / "index.html"
+        if index_path.exists():
+            return FileResponse(index_path)
+        
+        return {"error": "Frontend not built. Run: cd green-cycle-hub && npm run build"}, 503
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))

@@ -2,40 +2,85 @@
 
 A comprehensive waste management and sustainable agriculture platform connecting waste producers, bio-processors, and farmers.
 
+## 🚀 Quick Deploy to Vercel (Recommended)
+
+**New:** Full-stack deployment now available on Vercel! Frontend + Backend on one platform.
+
+```bash
+npm install -g vercel
+vercel login
+vercel --prod
+# Then set environment variables in Vercel Dashboard
+```
+
+👉 **[Read START_HERE.md for complete setup guide](START_HERE.md)**
+
+---
+
 ## Technology Stack
 
 - **Frontend**: React + TypeScript + Vite
 - **Backend**: FastAPI (Python)
-- **IoT**: MQTT broker for real-time sensor communication
+- **Deployment**: Vercel (full-stack) or Railway (traditional)
 - **Database**: Supabase (PostgreSQL)
 - **Payments**: M-Pesa, Flutterwave
 - **Notifications**: Firebase Cloud Messaging, SendGrid
+- **IoT**: MQTT (currently disabled on Vercel, will be moved to Railway)
 
 ## Project Structure
 
 ```
 .
-├── green-cycle-hub/          # Frontend (React + Vite)
-│   ├── src/
-│   ├── Dockerfile           # Nginx-based frontend container
-│   ├── package.json
-│   └── nginx.conf           # Reverse proxy to backend /api
+├── api/                     # Backend serverless (Vercel)
+│   └── index.py            # FastAPI entry point for Vercel
 │
-├── Dockerfile               # Backend container
-├── docker-compose.yml       # Local multi-container setup
-├── railway.json             # Railway deployment config
-├── .env.example             # Environment variables template
-└── RAILWAY_DEPLOYMENT.md    # Detailed deployment guide
+├── green-cycle-hub/         # Frontend (React + Vite)
+│   ├── src/
+│   ├── package.json
+│   ├── vite.config.ts
+│   ├── backend/            # Backend for local development
+│   │   ├── main.py
+│   │   ├── requirements.txt
+│   │   └── app/
+│   └── .env.example
+│
+├── vercel.json              # Vercel full-stack configuration
+├── .env.production          # Production env template
+├── .vercelignore            # Vercel build optimization
+│
+├── START_HERE.md            # 👈 Read this first!
+├── VERCEL_QUICK_START.md    # 3-step deployment guide
+├── DEPLOYMENT_CHECKLIST.md  # Detailed verification steps
+└── VERCEL_FULLSTACK_GUIDE.md # Complete deployment guide
 ```
 
-## Quick Start - Local Development
+## Quick Start - Deployment
 
-### Prerequisites
-- Docker and Docker Compose
-- Node.js 20+ (for local frontend development)
-- Python 3.12+ (for local backend development)
+### Production Deployment (Vercel)
 
-### 1. Start with Docker Compose
+**Recommended for production use.** Full-stack on Vercel with auto-scaling.
+
+```bash
+# 1. Install Vercel CLI
+npm install -g vercel
+
+# 2. Login to Vercel
+vercel login
+
+# 3. Deploy from root directory
+vercel --prod
+
+# 4. Set environment variables in Vercel Dashboard
+# (See START_HERE.md for which variables)
+
+# 5. Done! Your app is live
+```
+
+**For complete instructions**, see [START_HERE.md](START_HERE.md)
+
+### Local Development
+
+For local development with Docker or running services independently:
 
 ```bash
 # Copy environment template
@@ -43,9 +88,24 @@ cp .env.example .env
 
 # Edit .env with your credentials
 # Required: SUPABASE_*, JWT_SECRET
+```
 
-# Build and start all services
-docker-compose up --build
+**Frontend only:**
+```bash
+cd green-cycle-hub
+npm install --legacy-peer-deps
+npm run dev
+# Opens at http://localhost:5173
+```
+
+**Backend only:**
+```bash
+cd green-cycle-hub/backend
+python -m venv venv
+venv\Scripts\activate  # Windows
+pip install -r requirements.txt
+python main.py
+# API at http://localhost:8000
 ```
 
 Access:
@@ -59,16 +119,12 @@ Access:
 cd green-cycle-hub
 
 # Install dependencies
-npm install
+npm install --legacy-peer-deps
 
 # Start dev server
 npm run dev
-
-# Build for production
-npm run build
+# Opens at http://localhost:5173
 ```
-
-Frontend will proxy API calls to http://localhost:8000
 
 ### 3. Local Backend Development (without Docker)
 
@@ -83,10 +139,73 @@ source venv/bin/activate  # or `venv\Scripts\activate` on Windows
 pip install -r requirements.txt
 
 # Run development server
-uvicorn main:app --reload --port 8000
+python main.py
+# API at http://localhost:8000
 ```
 
-API will be available at http://localhost:8000
+---
+
+## 📋 Deployment Options
+
+### Option 1: Vercel (Recommended) ✅
+- **Full-stack:** Frontend + Backend on same platform
+- **Scaling:** Auto-scale with traffic
+- **Cost:** Free tier + $20/month for production
+- **Setup time:** ~30 minutes
+- **Limitation:** IoT/MQTT disabled (can be moved to Railway)
+
+**[Follow START_HERE.md](START_HERE.md) for Vercel deployment**
+
+### Option 2: Railway (Legacy)
+- **Traditional:** Monolithic deployment
+- **Services:** Frontend, Backend, MQTT, Database
+- **Cost:** ~$10-20/month
+- **Setup time:** ~1-2 hours
+- **Files:** See RAILWAY_DEPLOYMENT.md
+
+### Option 3: Docker Compose (Local)
+- **Development:** Run entire stack locally
+- **Services:** All included (frontend, backend, MQTT)
+- **Cost:** Free (hardware only)
+
+```bash
+docker-compose up --build
+```
+
+---
+
+## ✨ Features
+
+### ✅ Fully Working
+- React frontend with responsive UI
+- FastAPI backend with 11 API modules
+- User authentication (JWT + Google OAuth)
+- Supabase database integration
+- Payment processing (M-Pesa, Flutterwave)
+- Email notifications (SendGrid)
+- Admin panel and dashboards
+- Marketplace functionality
+- Learning center & courses
+- Reports & analytics
+- Waste management module
+- Processor & farmer modules
+- Notifications system
+
+### ⏸️ Currently Disabled (Temporary)
+- IoT sensors & real-time data
+- MQTT messaging (will move to Railway when budget allows)
+- Scheduled background tasks
+
+---
+
+## 📚 Documentation
+
+- **[START_HERE.md](START_HERE.md)** - Begin here! 5-minute overview
+- **[VERCEL_QUICK_START.md](VERCEL_QUICK_START.md)** - 3-step deployment
+- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Detailed verification
+- **[VERCEL_FULLSTACK_GUIDE.md](VERCEL_FULLSTACK_GUIDE.md)** - Complete guide (30+ pages)
+- **[VERCEL_CONFIG_SUMMARY.md](VERCEL_CONFIG_SUMMARY.md)** - Configuration overview
+- **[RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md)** - Legacy Railway setup
 
 ## Environment Variables
 
