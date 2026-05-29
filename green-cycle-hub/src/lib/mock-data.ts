@@ -39,23 +39,23 @@ export const COURSES = [
     duration: "6 hours",
     fee: "KES 2,500",
     modules: 8,
-    youtube_url: "https://www.youtube.com/embed/7GgiVfHkQdA" // Example: Composting basics
+    youtube_url: "https://www.youtube.com/embed/7GgiVfHkQdA" // Composting basics
   },
   {
-    title: "Anaerobic Digestion 101",
+    title: "Compost Heap Management 101",
     instructor: "John Kamau",
     duration: "4 hours",
     fee: "KES 1,800",
     modules: 6,
-    youtube_url: "https://www.youtube.com/embed/1w2KQbKpKqA" // Example: Anaerobic digestion
+    youtube_url: "https://www.youtube.com/embed/1w2KQbKpKqA" // Compost heap management
   },
   {
-    title: "Waste Sorting Best Practices",
+    title: "Advanced Composting Techniques",
     instructor: "Sarah Otieno",
     duration: "3 hours",
     fee: "KES 1,200",
     modules: 5,
-    youtube_url: "https://www.youtube.com/embed/2R7h6u5Q2vA" // Example: Waste sorting
+    youtube_url: "https://www.youtube.com/embed/2R7h6u5Q2vA" // Advanced composting techniques
   },
 ];
 

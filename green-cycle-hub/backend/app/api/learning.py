@@ -19,6 +19,7 @@ class CourseCreate(BaseModel):
     content: str
     duration_minutes: int
     difficulty_level: str
+    youtube_url: Optional[str] = None
 
 
 class CourseEnrollment(BaseModel):

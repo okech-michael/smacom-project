@@ -7,6 +7,7 @@ import { BookOpen, GraduationCap, Award, LifeBuoy, Play, Check } from "lucide-re
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "@/lib/api";
 import { Logo } from "@/components/smacom/Logo";
+import { COURSES } from "@/lib/mock-data";
 
 const NAV: NavItem[] = [
   { label: "Catalogue", to: "/dashboard/learner", icon: BookOpen },
@@ -19,6 +20,7 @@ export default function LearnerDashboard() {
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<any>(COURSES[0]);
 
   useEffect(() => {
     async function fetchCourses() {
@@ -80,14 +82,29 @@ export default function LearnerDashboard() {
           <TabsContent value="player" className="mt-6">
             <div className="grid lg:grid-cols-3 gap-5">
               <div className="lg:col-span-2 space-y-3">
-                <div className="aspect-video rounded-md bg-foreground/90 flex items-center justify-center">
-                  <div className="inline-flex h-16 w-16 rounded-full bg-primary text-primary-foreground items-center justify-center">
-                    <Play className="h-7 w-7 ml-1" />
+                {selectedCourse?.youtube_url ? (
+                  <div className="aspect-video rounded-md bg-black overflow-hidden">
+                    <iframe
+                      width="100%"
+                      height="100%"
+                      src={selectedCourse.youtube_url}
+                      title={selectedCourse.title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full"
+                    />
                   </div>
-                </div>
+                ) : (
+                  <div className="aspect-video rounded-md bg-foreground/90 flex items-center justify-center">
+                    <div className="inline-flex h-16 w-16 rounded-full bg-primary text-primary-foreground items-center justify-center">
+                      <Play className="h-7 w-7 ml-1" />
+                    </div>
+                  </div>
+                )}
                 <Card className="p-4">
                   <p className="text-sm text-muted-foreground">Module 3 of 8</p>
-                  <h2 className="font-semibold mt-0.5">Carbon-to-Nitrogen ratios in active piles</h2>
+                  <h2 className="font-semibold mt-0.5">{selectedCourse?.title || "Carbon-to-Nitrogen ratios in active piles"}</h2>
                   <div className="mt-3 space-y-1.5">
                     <div className="flex justify-between text-xs"><span className="text-muted-foreground">Course progress</span><span className="font-medium">45%</span></div>
                     <div className="h-2 bg-secondary rounded-full overflow-hidden"><div className="h-full bg-primary" style={{ width: "45%" }} /></div>
@@ -95,26 +112,23 @@ export default function LearnerDashboard() {
                 </Card>
               </div>
               <Card className="p-4">
-                <h3 className="font-semibold mb-3">Modules</h3>
-                <ul className="space-y-1.5">
-                  {[
-                    ["Intro to organic decomposition", true],
-                    ["Pile structure & aeration", true],
-                    ["C:N ratios in active piles", false],
-                    ["Moisture and temperature control", false],
-                    ["Maturation and curing", false],
-                    ["Quality testing", false],
-                    ["Storage & packaging", false],
-                    ["Final assessment", false],
-                  ].map(([t, done], i) => (
-                    <li key={i} className={`flex items-center gap-2 rounded-md px-2.5 py-2 text-sm ${i === 2 ? "bg-accent text-accent-foreground" : ""}`}>
-                      <span className={`h-5 w-5 rounded-full inline-flex items-center justify-center text-xs shrink-0 ${done ? "bg-primary text-primary-foreground" : "border border-border"}`}>
-                        {done ? <Check className="h-3 w-3" /> : i + 1}
-                      </span>
-                      <span className={done ? "text-muted-foreground line-through" : ""}>{t as string}</span>
-                    </li>
+                <h3 className="font-semibold mb-3">Available Courses</h3>
+                <div className="space-y-2">
+                  {COURSES.map((course, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedCourse(course)}
+                      className={`w-full text-left rounded-md px-3 py-2 text-sm transition ${
+                        selectedCourse?.title === course.title
+                          ? "bg-accent text-accent-foreground"
+                          : "hover:bg-secondary"
+                      }`}
+                    >
+                      <p className="font-medium">{course.title}</p>
+                      <p className="text-xs opacity-75">{course.instructor}</p>
+                    </button>
                   ))}
-                </ul>
+                </div>
               </Card>
             </div>
           </TabsContent>
