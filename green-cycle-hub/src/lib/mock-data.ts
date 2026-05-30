@@ -35,7 +35,8 @@ export const PRODUCTS = [
 export const COURSES = [
   {
     title: "Composting Fundamentals",
-    instructor: "Dr. Amina Waweru",
+    instructor: "WasteWise Kenya",
+    youtube_channel: "WasteWise Kenya",
     duration: "6 hours",
     fee: "KES 2,500",
     modules: 8,
@@ -43,7 +44,8 @@ export const COURSES = [
   },
   {
     title: "Compost Heap Management 101",
-    instructor: "John Kamau",
+    instructor: "Recycling Revolution",
+    youtube_channel: "Recycling Revolution",
     duration: "4 hours",
     fee: "KES 1,800",
     modules: 6,
@@ -51,11 +53,21 @@ export const COURSES = [
   },
   {
     title: "Advanced Composting Techniques",
-    instructor: "Sarah Otieno",
+    instructor: "Circular Garden Hub",
+    youtube_channel: "Circular Garden Hub",
     duration: "3 hours",
     fee: "KES 1,200",
     modules: 5,
     youtube_url: "https://www.youtube.com/embed/2R7h6u5Q2vA" // Advanced composting techniques
+  },
+  {
+    title: "Waste Recycling & Circular Living",
+    instructor: "GreenCycle Channel",
+    youtube_channel: "GreenCycle Channel",
+    duration: "5 hours",
+    fee: "KES 2,000",
+    modules: 7,
+    youtube_url: "https://www.youtube.com/embed/3G9ZjT0KxkY" // Waste recycling principles
   },
 ];
 

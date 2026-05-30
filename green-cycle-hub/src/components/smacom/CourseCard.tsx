@@ -8,13 +8,14 @@ interface Props {
   instructor: string;
   duration: string;
   fee: string;
+  youtube_channel?: string;
   ctaLabel?: string;
   progress?: number;
   youtube_url?: string;
 }
 
 
-export function CourseCard({ title, instructor, duration, fee, ctaLabel = "Enrol Now", progress, youtube_url }: Props) {
+export function CourseCard({ title, instructor, duration, fee, youtube_channel, ctaLabel = "Enrol Now", progress, youtube_url }: Props) {
   return (
     <Card className="overflow-hidden shadow-sm">
       {youtube_url ? (
@@ -39,6 +40,9 @@ export function CourseCard({ title, instructor, duration, fee, ctaLabel = "Enrol
         <h3 className="font-semibold leading-tight">{title}</h3>
         <div className="space-y-1 text-sm text-muted-foreground">
           <div className="flex items-center gap-1.5"><User className="h-4 w-4" />{instructor}</div>
+          {youtube_channel ? (
+            <div className="flex items-center gap-1.5 text-xs text-foreground/70">Channel: <span className="font-medium">{youtube_channel}</span></div>
+          ) : null}
           <div className="flex items-center gap-1.5"><Clock className="h-4 w-4" />{duration}</div>
         </div>
         {progress !== undefined ? (
