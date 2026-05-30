@@ -24,7 +24,6 @@ else:
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import uvicorn
 
@@ -66,6 +65,8 @@ app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["
 app.include_router(reports.router, prefix="/api/v1/reports", tags=["Reports"])
 
 @app.get("/health")
+@app.get("/api/health")
+@app.get("/api/v1/health")
 def health_check():
     """Health check endpoint"""
     return {"status": "healthy", "environment": settings.environment}
