@@ -3,7 +3,7 @@
 // VITE_API_URL must be explicitly set for production builds on Vercel
 export const API_BASE_URL = import.meta.env.VITE_API_URL || (
   typeof window !== 'undefined' && window.location.hostname === 'localhost'
-    ? 'http://localhost:8080/api/v1'  // Local development
+    ? 'http://localhost:8000/api/v1'  // Local development
     : '/api/v1'  // Production - same domain, use relative path
 );
 

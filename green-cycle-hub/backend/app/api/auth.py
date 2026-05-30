@@ -116,7 +116,7 @@ async def google_oauth(redirect_to: str | None = None):
     if not settings.supabase_url:
         raise HTTPException(status_code=500, detail="Supabase URL is not configured")
 
-    target = redirect_to or settings.frontend_url or "http://localhost:8080"
+    target = redirect_to or settings.frontend_url or "http://localhost:5173"
     authorize_url = (
         f"{settings.supabase_url.rstrip('/')}/auth/v1/authorize"
         f"?provider=google&redirect_to={quote_plus(target)}"
