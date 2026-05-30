@@ -210,3 +210,14 @@ async def get_current_user_profile(current_user: dict = Depends(get_current_user
     """Get current user profile"""
     user_data = supabase.table("users").select("*").eq("id", current_user["id"]).single().execute()
     return {"success": True, "data": user_data.data}
+
+
+@router.get("/_env")
+def debug_env():
+    """Temporary diagnostic endpoint — returns whether key env vars are set (no secret values returned)"""
+    return {
+        "supabase_url_set": bool(settings.supabase_url),
+        "supabase_service_role_key_set": bool(settings.supabase_service_role_key),
+        "supabase_anon_key_set": bool(settings.supabase_anon_key),
+        "google_client_id_set": bool(settings.google_client_id),
+    }
