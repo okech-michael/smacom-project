@@ -32,6 +32,8 @@ class SignupResponse(BaseModel):
     id: str
     email: str
     full_name: str
+    access_token: str
+    user: dict
     message: str
 
 
@@ -99,11 +101,43 @@ async def signup(payload: SignupRequest, supabase=Depends(get_supabase)):
         
         supabase.table("users").insert(user_data).execute()
         
+        # Try to get access token by signing in with the new credentials
+        access_token = None
+        user_response = None
+        try:
+            sign_in_response = supabase.auth.sign_in_with_password({
+                "email": payload.email,
+                "password": payload.password,
+            })
+            if sign_in_response.session:
+                access_token = sign_in_response.session.access_token
+                # Convert user object to dict if needed
+                if hasattr(sign_in_response.user, 'model_dump'):
+                    user_response = sign_in_response.user.model_dump()
+                elif hasattr(sign_in_response.user, '__dict__'):
+                    user_response = sign_in_response.user.__dict__
+                else:
+                    user_response = dict(sign_in_response.user) if sign_in_response.user else user_data
+        except Exception as e:
+            # If sign-in fails, we still created the user, so just warn
+            print(f"Warning: Could not auto-sign in new user: {e}")
+        
+        if not access_token:
+            # Fallback: if we couldn't get a session, still return user data
+            access_token = ""
+            user_response = user_data
+        
+        # Ensure user_response is a dict
+        if not isinstance(user_response, dict):
+            user_response = user_data
+        
         return SignupResponse(
             id=user_id,
             email=payload.email,
             full_name=payload.full_name,
-            message="Account created successfully. Please check your email to confirm.",
+            access_token=access_token,
+            user=user_response,
+            message="Account created successfully. You are now logged in.",
         )
     
     except Exception as e:

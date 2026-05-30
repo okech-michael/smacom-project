@@ -60,10 +60,18 @@ export default function Register() {
       setLoading(true);
       setError("");
       try {
-        await signup({
+        const response = await signup({
           email: formData.email, password: formData.password, full_name: formData.full_name,
           phone: formData.phone, role: role!, organisation: formData.organisation, address: formData.address,
         });
+        // Save token and redirect to dashboard
+        if (response.access_token) {
+          localStorage.setItem("access_token", response.access_token);
+          localStorage.setItem("user", JSON.stringify(response.user));
+          // Redirect to dashboard immediately
+          navigate("/dashboard/learner");
+          return;
+        }
         setStep(3);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Signup failed. Please try again.");

@@ -1,11 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/smacom/Logo";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Eye, EyeOff, ArrowRight, Leaf } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Leaf, AlertCircle } from "lucide-react";
+import { API_BASE_URL, login } from "@/lib/api";
 
 function GoogleIcon() {
   return (
@@ -19,13 +20,40 @@ function GoogleIcon() {
 }
 
 export default function Login() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [error, setError] = useState("");
 
   function handleGoogleSignIn() {
     setGoogleLoading(true);
-    // TODO: wire up real OAuth — e.g. signInWithGoogle() from your auth provider
-    setTimeout(() => setGoogleLoading(false), 2000);
+    window.location.href = `${API_BASE_URL}/auth/oauth/google?redirect_to=${encodeURIComponent(window.location.origin)}`;
+  }
+
+  async function handleEmailSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    setEmailLoading(true);
+    setError("");
+    
+    if (!email || !password) {
+      setError("Please enter email and password");
+      setEmailLoading(false);
+      return;
+    }
+    
+    try {
+      const response = await login(email, password);
+      localStorage.setItem("access_token", response.access_token);
+      localStorage.setItem("user", JSON.stringify(response.user));
+      navigate("/dashboard/learner");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed. Please try again.");
+    } finally {
+      setEmailLoading(false);
+    }
   }
 
   return (
@@ -59,6 +87,7 @@ export default function Login() {
             <motion.button
               onClick={handleGoogleSignIn}
               disabled={googleLoading}
+              type="button"
               className="w-full flex items-center justify-center gap-3 h-11 rounded-xl border border-white/12 bg-white/5 hover:bg-white/10 hover:border-white/20 text-white/80 hover:text-white text-sm font-semibold transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
               whileHover={{ y: -1 }}
               whileTap={{ scale: 0.98 }}
@@ -83,14 +112,27 @@ export default function Login() {
           </div>
 
           {/* Email / password form */}
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-4" onSubmit={handleEmailSignIn}>
+            {error && (
+              <motion.div
+                className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl flex gap-2 items-start"
+                initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+              >
+                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                {error}
+              </motion.div>
+            )}
+            
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-xs font-semibold text-white/50 uppercase tracking-wider">Email</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="you@example.com"
-                className="h-11 bg-white/5 border-white/10 text-white placeholder:text-white/25 rounded-xl focus:border-emerald-500/50 focus:ring-emerald-500/20 transition-colors"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={emailLoading}
+                className="h-11 bg-white/5 border-white/10 text-white placeholder:text-white/25 rounded-xl focus:border-emerald-500/50 focus:ring-emerald-500/20 transition-colors disabled:opacity-50"
               />
             </div>
 
@@ -104,12 +146,16 @@ export default function Login() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="h-11 bg-white/5 border-white/10 text-white placeholder:text-white/25 rounded-xl pr-10 focus:border-emerald-500/50 focus:ring-emerald-500/20 transition-colors"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={emailLoading}
+                  className="h-11 bg-white/5 border-white/10 text-white placeholder:text-white/25 rounded-xl pr-10 focus:border-emerald-500/50 focus:ring-emerald-500/20 transition-colors disabled:opacity-50"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+                  disabled={emailLoading}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors disabled:opacity-50"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -126,9 +172,10 @@ export default function Login() {
             <motion.div whileHover={{ y: -1 }} whileTap={{ scale: 0.99 }}>
               <Button
                 type="submit"
-                className="w-full h-11 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all"
+                disabled={emailLoading}
+                className="w-full h-11 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Sign in <ArrowRight className="h-4 w-4 ml-1" />
+                {emailLoading ? "Signing in..." : "Sign in"} <ArrowRight className="h-4 w-4 ml-1" />
               </Button>
             </motion.div>
           </form>
