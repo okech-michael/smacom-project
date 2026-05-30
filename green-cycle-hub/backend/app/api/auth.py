@@ -67,6 +67,21 @@ async def signup(payload: SignupRequest, supabase=Depends(get_supabase)):
             return response.get("user", {}).get("id")
         return None
 
+
+def _normalize_supabase_url(url: str) -> str:
+    """Return the Supabase project root URL without REST path segments."""
+    normalized = url.rstrip('/')
+    if normalized.endswith('/rest/v1'):
+        normalized = normalized[: -len('/rest/v1')]
+    return normalized
+
+    def _normalize_supabase_url(url: str) -> str:
+        """Return the Supabase project root URL without REST path segments."""
+        normalized = url.rstrip('/')
+        if normalized.endswith('/rest/v1'):
+            normalized = normalized[: -len('/rest/v1')]
+        return normalized
+
     try:
         # Create Supabase Auth user using service role credentials.
         auth_client = supabase.auth
@@ -94,9 +109,7 @@ async def signup(payload: SignupRequest, supabase=Depends(get_supabase)):
             "phone": payload.phone,
             "role": payload.role,
             "organisation": payload.organisation,
-            "address": payload.address,
-            "status": "pending_verification",
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "status": "pending",
         }
         
         supabase.table("users").insert(user_data).execute()
@@ -149,11 +162,16 @@ async def google_oauth(redirect_to: str | None = None):
     """Redirect the user to Supabase Google OAuth."""
     if not settings.supabase_url:
         raise HTTPException(status_code=500, detail="Supabase URL is not configured")
+    if not settings.supabase_anon_key:
+        raise HTTPException(status_code=500, detail="Supabase anon key is not configured")
 
-    target = redirect_to or settings.frontend_url or "http://localhost:5173"
+    base_url = _normalize_supabase_url(settings.supabase_url)
+    target = redirect_to or settings.frontend_url or "https://www.smacom.co.ke"
     authorize_url = (
-        f"{settings.supabase_url.rstrip('/')}/auth/v1/authorize"
-        f"?provider=google&redirect_to={quote_plus(target)}"
+        f"{base_url}/auth/v1/authorize"
+        f"?provider=google"
+        f"&redirect_to={quote_plus(target)}"
+        f"&apikey={quote_plus(settings.supabase_anon_key)}"
     )
     return RedirectResponse(authorize_url)
 
