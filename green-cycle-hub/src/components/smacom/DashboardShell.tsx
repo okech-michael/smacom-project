@@ -29,7 +29,33 @@ export function DashboardShell({ role, roleLabel, userName, nav, children }: Pro
   const { pathname } = useLocation();
   const [notifOpen, setNotifOpen] = useState(false);
 
-  const sidebar = (
+  const sidebarContent = (
+    <nav className="flex flex-col gap-1 p-3" aria-label="Dashboard navigation">
+      {nav.map((item) => {
+        const active = pathname === item.to || (item.to !== nav[0].to && pathname.startsWith(item.to));
+        return (
+          <NavLink
+            to={item.to}
+            end
+            key={item.to}
+            className={({ isActive }) =>
+              cn(
+                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition",
+                (isActive || active)
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+              )
+            }
+          >
+            <item.icon className="h-4 w-4" />
+            {item.label}
+          </NavLink>
+        );
+      })}
+    </nav>
+  );
+
+  const mobileSidebar = (
     <nav className="flex flex-col gap-1 p-3" aria-label="Dashboard navigation">
       {nav.map((item) => {
         const active = pathname === item.to || (item.to !== nav[0].to && pathname.startsWith(item.to));
@@ -69,7 +95,7 @@ export function DashboardShell({ role, roleLabel, userName, nav, children }: Pro
               </SheetTrigger>
               <SheetContent side="left" className="w-72 p-0">
                 <div className="p-4 border-b border-border"><Logo /></div>
-                {sidebar}
+                {mobileSidebar}
               </SheetContent>
             </Sheet>
             <Logo />
@@ -104,7 +130,7 @@ export function DashboardShell({ role, roleLabel, userName, nav, children }: Pro
 
       <div className="flex">
         <aside className="hidden lg:block w-64 shrink-0 border-r border-border min-h-[calc(100vh-4rem)] bg-card">
-          {sidebar}
+          {sidebarContent}
         </aside>
         <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 pb-20 lg:pb-8">{children}</main>
       </div>
