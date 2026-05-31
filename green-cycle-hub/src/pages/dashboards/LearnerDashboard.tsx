@@ -10,6 +10,16 @@ import { useDashboardAuth } from "@/hooks/useDashboardAuth";
 import { Logo } from "@/components/smacom/Logo";
 import { COURSES } from "@/lib/mock-data";
 
+interface Course {
+  id?: string;
+  title: string;
+  instructor: string;
+  duration: string;
+  fee: string;
+  youtube_channel?: string;
+  youtube_url?: string;
+}
+
 const NAV: NavItem[] = [
   { label: "Catalogue", to: "/dashboard/learner", icon: BookOpen },
   { label: "My Courses", to: "/dashboard/learner?tab=mine", icon: GraduationCap },
@@ -19,10 +29,10 @@ const NAV: NavItem[] = [
 
 export default function LearnerDashboard() {
   const { user, loading: authLoading } = useDashboardAuth("learner");
-  const [courses, setCourses] = useState<any[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedCourse, setSelectedCourse] = useState<any>(COURSES[0]);
+  const [selectedCourse, setSelectedCourse] = useState<Course>(COURSES[0]);
 
   useEffect(() => {
     async function fetchCourses() {
@@ -31,10 +41,11 @@ export default function LearnerDashboard() {
       try {
         const res = await fetch(`${API_BASE_URL}/learning/courses`);
         if (!res.ok) throw new Error("Failed to fetch courses");
-        const data = await res.json();
-        setCourses(data.data || []);
-      } catch (err: any) {
-        setError(err.message || "Unknown error");
+        const data = (await res.json()) as { data?: Course[] };
+        setCourses(data.data ?? []);
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : "Unknown error";
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }

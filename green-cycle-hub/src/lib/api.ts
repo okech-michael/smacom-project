@@ -7,6 +7,17 @@ export const API_BASE_URL = import.meta.env.VITE_API_URL || (
     : '/api/v1'
 );
 
+export interface AuthUser {
+  id: string;
+  email: string;
+  full_name?: string;
+  role: string;
+  status?: string;
+  organisation?: string;
+  address?: string;
+  [key: string]: unknown;
+}
+
 const DASHBOARD_ROUTES: Record<string, string> = {
   producer: '/dashboard/producer',
   processor: '/dashboard/processor',
@@ -31,15 +42,19 @@ export function getRoleLabel(role: string) {
   return ROLE_LABELS[role] ?? `${role.charAt(0).toUpperCase()}${role.slice(1)}`;
 }
 
-export function normalizeUserData(user: any) {
+export function normalizeUserData(user: unknown): AuthUser | null {
   if (!user) return null;
-  if (typeof user === 'object' && 'data' in user) {
-    return user.data;
+  if (typeof user === 'object' && user !== null) {
+    const record = user as Record<string, unknown>;
+    if ('data' in record && typeof record.data === 'object' && record.data !== null) {
+      return record.data as AuthUser;
+    }
+    return record as AuthUser;
   }
-  return user;
+  return null;
 }
 
-export function saveAuthSession(response: { access_token: string; user: any }) {
+export function saveAuthSession(response: { access_token: string; user: unknown }) {
   if (typeof window === 'undefined') return;
   localStorage.setItem('access_token', response.access_token || '');
   localStorage.setItem('user', JSON.stringify(normalizeUserData(response.user) ?? {}));

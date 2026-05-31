@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser, getDashboardRoute } from "@/lib/api";
+import { AuthUser, getCurrentUser, getDashboardRoute } from "@/lib/api";
 
 export function useDashboardAuth(expectedRole: string) {
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
