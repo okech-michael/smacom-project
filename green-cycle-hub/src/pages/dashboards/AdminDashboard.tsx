@@ -5,11 +5,12 @@ import { StatusBadge, Status } from "@/components/smacom/StatusBadge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { LayoutDashboard, Activity, Users, Receipt, TrendingUp, BookOpen, FileText, Download, Trash, Pencil } from "lucide-react";
 import { IOT_UNITS, COURSES, PRODUCTION_TREND } from "@/lib/mock-data";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { useDashboardAuth } from "@/hooks/useDashboardAuth";
+import { getRoleLabel } from "@/lib/api";
 
 const NAV: NavItem[] = [
   { label: "Overview", to: "/dashboard/admin", icon: LayoutDashboard },
@@ -22,8 +23,18 @@ const NAV: NavItem[] = [
 ];
 
 export default function AdminDashboard() {
+  const { user, loading: authLoading } = useDashboardAuth("admin");
+
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading dashboard...</div>;
+  }
+
+  if (!user) {
+    return null;
+  }
+
   return (
-    <DashboardShell role="admin" roleLabel="Admin" userName="SMACOM Admin" nav={NAV}>
+    <DashboardShell role="admin" roleLabel={getRoleLabel(user.role)} userName={user.full_name || user.email} nav={NAV}>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold">Platform overview</h1>

@@ -13,6 +13,13 @@ router = APIRouter(tags=["Authentication"])
 VALID_ROLES = {"producer", "processor", "farmer", "learner", "admin"}
 
 
+def _normalize_supabase_url(url: str) -> str:
+    normalized = url.rstrip('/')
+    if normalized.endswith('/rest/v1'):
+        normalized = normalized[: -len('/rest/v1')]
+    return normalized
+
+
 class SignupRequest(BaseModel):
     email: EmailStr
     password: str
@@ -45,18 +52,16 @@ class LoginResponse(BaseModel):
 @router.post("/signup", response_model=SignupResponse)
 async def signup(payload: SignupRequest, supabase=Depends(get_supabase)):
     """Register a new user account"""
-    
-    # Validate role
+
     if payload.role not in VALID_ROLES:
         raise HTTPException(status_code=400, detail="Invalid role")
-    
-    # Check if email exists
+
+    if not settings.supabase_url or not settings.supabase_service_role_key:
+        raise HTTPException(status_code=500, detail="Supabase auth is not configured")
+
     existing = supabase.table("users").select("id").eq("email", payload.email).execute()
     if existing.data:
         raise HTTPException(status_code=400, detail="Email already registered")
-    
-    if not settings.supabase_url or not settings.supabase_service_role_key:
-        raise HTTPException(status_code=500, detail="Supabase auth is not configured")
 
     def _get_user_id(response):
         if not response:
@@ -67,23 +72,7 @@ async def signup(payload: SignupRequest, supabase=Depends(get_supabase)):
             return response.get("user", {}).get("id")
         return None
 
-
-def _normalize_supabase_url(url: str) -> str:
-    """Return the Supabase project root URL without REST path segments."""
-    normalized = url.rstrip('/')
-    if normalized.endswith('/rest/v1'):
-        normalized = normalized[: -len('/rest/v1')]
-    return normalized
-
-    def _normalize_supabase_url(url: str) -> str:
-        """Return the Supabase project root URL without REST path segments."""
-        normalized = url.rstrip('/')
-        if normalized.endswith('/rest/v1'):
-            normalized = normalized[: -len('/rest/v1')]
-        return normalized
-
     try:
-        # Create Supabase Auth user using service role credentials.
         auth_client = supabase.auth
         if hasattr(auth_client, "admin") and hasattr(auth_client.admin, "create_user"):
             auth_response = auth_client.admin.create_user({
@@ -101,7 +90,6 @@ def _normalize_supabase_url(url: str) -> str:
         if not user_id:
             raise HTTPException(status_code=500, detail="Failed to create auth user")
 
-        # Create user profile in database
         user_data = {
             "id": user_id,
             "email": payload.email,
@@ -109,22 +97,22 @@ def _normalize_supabase_url(url: str) -> str:
             "phone": payload.phone,
             "role": payload.role,
             "organisation": payload.organisation,
+            "address": payload.address,
             "status": "pending",
         }
-        
+
         supabase.table("users").insert(user_data).execute()
-        
-        # Try to get access token by signing in with the new credentials
-        access_token = None
-        user_response = None
+
+        access_token = ""
+        user_response = user_data
+
         try:
             sign_in_response = supabase.auth.sign_in_with_password({
                 "email": payload.email,
                 "password": payload.password,
             })
-            if sign_in_response.session:
+            if sign_in_response and getattr(sign_in_response, "session", None):
                 access_token = sign_in_response.session.access_token
-                # Convert user object to dict if needed
                 if hasattr(sign_in_response.user, 'model_dump'):
                     user_response = sign_in_response.user.model_dump()
                 elif hasattr(sign_in_response.user, '__dict__'):
@@ -132,18 +120,11 @@ def _normalize_supabase_url(url: str) -> str:
                 else:
                     user_response = dict(sign_in_response.user) if sign_in_response.user else user_data
         except Exception as e:
-            # If sign-in fails, we still created the user, so just warn
             print(f"Warning: Could not auto-sign in new user: {e}")
-        
-        if not access_token:
-            # Fallback: if we couldn't get a session, still return user data
-            access_token = ""
-            user_response = user_data
-        
-        # Ensure user_response is a dict
+
         if not isinstance(user_response, dict):
             user_response = user_data
-        
+
         return SignupResponse(
             id=user_id,
             email=payload.email,
@@ -152,7 +133,6 @@ def _normalize_supabase_url(url: str) -> str:
             user=user_response,
             message="Account created successfully. You are now logged in.",
         )
-    
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

@@ -51,12 +51,10 @@ def get_course(course_id: str, supabase=Depends(get_supabase)):
 @router.post("/courses")
 def create_course(
     course: CourseCreate,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_role("admin")),
     supabase=Depends(get_supabase)
 ):
     """Create a new course (admin only)"""
-    require_role(current_user, "admin")
-    
     data = course.model_dump()
     data["created_by"] = current_user.get("id")
     data["created_at"] = datetime.now(timezone.utc).isoformat()

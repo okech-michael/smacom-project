@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getCurrentUser, getDashboardRoute } from '@/lib/api';
 
 export function useOAuthCallback() {
   const navigate = useNavigate();
@@ -37,42 +38,22 @@ export function useOAuthCallback() {
       localStorage.setItem('token_expires_at', expiresAt.toString());
     }
 
-    // Fetch user data and save to localStorage
     const fetchUser = async () => {
       try {
-        const apiUrl = window.location.pathname.includes('/api/') 
-          ? '/api/v1/auth/me'
-          : new URL('/api/v1/auth/me', window.location.origin).toString();
-        
-        console.log('Fetching user from:', apiUrl);
-        
-        const response = await fetch(apiUrl, {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-        });
-        
-        if (response.ok) {
-          const user = await response.json();
-          console.log('User fetched successfully:', user);
-          localStorage.setItem('user', JSON.stringify(user));
-        } else {
-          console.warn('Failed to fetch user. Status:', response.status);
-          // Still redirect even if user fetch fails, token is already saved
-        }
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-        // Still redirect even if fetch fails, token is already saved
+        const user = await getCurrentUser(accessToken);
+        localStorage.setItem('user', JSON.stringify(user));
+        navigate(getDashboardRoute(user?.role || 'learner'));
+      } catch (fetchError) {
+        console.error('Failed to fetch user:', fetchError);
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user');
+        navigate('/login');
       }
     };
 
-    // Fetch user data
+    // Fetch user data and route to the correct dashboard
     fetchUser();
 
-    // Clear the fragment and redirect to dashboard
-    console.log('Redirecting to dashboard');
     window.history.replaceState({}, document.title, window.location.pathname);
-    navigate('/dashboard/learner');
   }, [navigate]);
 }

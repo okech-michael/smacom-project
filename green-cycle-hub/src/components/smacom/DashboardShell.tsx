@@ -1,13 +1,12 @@
 import { ReactNode, useState } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { Bell, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Logo } from "./Logo";
 import { NotificationPanel } from "./NotificationPanel";
-import { ROLES, RoleId } from "@/lib/mock-data";
+import { RoleId } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 export interface NavItem {
@@ -102,16 +101,9 @@ export function DashboardShell({ role, roleLabel, userName, nav, children }: Pro
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="hidden sm:flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">Viewing as:</span>
-              <Select value={role} onValueChange={(val) => navigate(`/dashboard/${val}`)}>
-                <SelectTrigger className="h-9 w-[160px]"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {ROLES.map((r) => (
-                    <SelectItem key={r.id} value={r.id}>{r.title}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="hidden sm:flex flex-col text-right">
+              <span className="text-xs text-muted-foreground">Role</span>
+              <span className="text-sm font-semibold">{roleLabel}</span>
             </div>
             <Button variant="ghost" size="icon" onClick={() => setNotifOpen(true)} aria-label="Notifications">
               <Bell className="h-5 w-5" />

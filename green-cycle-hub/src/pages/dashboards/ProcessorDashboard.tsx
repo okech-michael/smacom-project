@@ -11,6 +11,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { LayoutDashboard, Activity, Truck, ClipboardList, Boxes, Wallet } from "lucide-react";
 import { IOT_UNITS, PICKUP_REQUESTS, INTAKE_LOG } from "@/lib/mock-data";
+import { useDashboardAuth } from "@/hooks/useDashboardAuth";
+import { getRoleLabel } from "@/lib/api";
 
 const NAV: NavItem[] = [
   { label: "Overview", to: "/dashboard/processor", icon: LayoutDashboard },
@@ -22,10 +24,19 @@ const NAV: NavItem[] = [
 ];
 
 export default function ProcessorDashboard() {
+  const { user, loading: authLoading } = useDashboardAuth("processor");
   const [tab, setTab] = useState("overview");
 
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading dashboard...</div>;
+  }
+
+  if (!user) {
+    return null;
+  }
+
   return (
-    <DashboardShell role="processor" roleLabel="Bio-Processor" userName="GreenCycle Processors" nav={NAV}>
+    <DashboardShell role="processor" roleLabel={getRoleLabel(user.role)} userName={user.full_name || user.email} nav={NAV}>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold">Welcome back, GreenCycle</h1>

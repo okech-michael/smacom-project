@@ -7,7 +7,7 @@ import { Logo } from "@/components/smacom/Logo";
 import { ROLES, RoleId } from "@/lib/mock-data";
 import { Check, Upload, AlertCircle, Eye, EyeOff, ArrowRight, ChevronLeft, Leaf } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { API_BASE_URL, signup } from "@/lib/api";
+import { API_BASE_URL, getDashboardRoute, normalizeUserData, saveAuthSession, signup } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 
 const STEPS = ["Choose role", "Your details", "Upload ID", "Verification"];
@@ -64,15 +64,16 @@ export default function Register() {
           email: formData.email, password: formData.password, full_name: formData.full_name,
           phone: formData.phone, role: role!, organisation: formData.organisation, address: formData.address,
         });
-        // Save token and redirect to dashboard
+        const user = normalizeUserData(response.user) ?? response.user;
+
         if (response.access_token) {
-          localStorage.setItem("access_token", response.access_token);
-          localStorage.setItem("user", JSON.stringify(response.user));
-          // Redirect to dashboard immediately
-          navigate("/dashboard/learner");
+          saveAuthSession({ access_token: response.access_token, user });
+          navigate(getDashboardRoute(user?.role || "learner"));
           return;
         }
+
         setStep(3);
+        return;
       } catch (err) {
         setError(err instanceof Error ? err.message : "Signup failed. Please try again.");
       } finally {

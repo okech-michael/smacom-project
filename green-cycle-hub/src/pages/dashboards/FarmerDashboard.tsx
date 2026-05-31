@@ -12,6 +12,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Store, ShoppingBag, Sparkles, Award, LifeBuoy, Medal } from "lucide-react";
 import { PRODUCTS } from "@/lib/mock-data";
 import { useState } from "react";
+import { useDashboardAuth } from "@/hooks/useDashboardAuth";
+import { getRoleLabel } from "@/lib/api";
 
 const NAV: NavItem[] = [
   { label: "Marketplace", to: "/dashboard/farmer", icon: Store },
@@ -22,10 +24,19 @@ const NAV: NavItem[] = [
 ];
 
 export default function FarmerDashboard() {
+  const { user, loading: authLoading } = useDashboardAuth("farmer");
   const [price, setPrice] = useState([0, 5000]);
 
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading dashboard...</div>;
+  }
+
+  if (!user) {
+    return null;
+  }
+
   return (
-    <DashboardShell role="farmer" roleLabel="Farmer" userName="Daniel Otieno" nav={NAV}>
+    <DashboardShell role="farmer" roleLabel={getRoleLabel(user.role)} userName={user.full_name || user.email} nav={NAV}>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold">Eco-Marketplace</h1>

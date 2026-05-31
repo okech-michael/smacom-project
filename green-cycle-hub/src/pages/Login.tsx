@@ -6,7 +6,7 @@ import { Logo } from "@/components/smacom/Logo";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Eye, EyeOff, ArrowRight, Leaf, AlertCircle } from "lucide-react";
-import { API_BASE_URL, login } from "@/lib/api";
+import { API_BASE_URL, getDashboardRoute, login, normalizeUserData, saveAuthSession } from "@/lib/api";
 
 function GoogleIcon() {
   return (
@@ -46,9 +46,9 @@ export default function Login() {
     
     try {
       const response = await login(email, password);
-      localStorage.setItem("access_token", response.access_token);
-      localStorage.setItem("user", JSON.stringify(response.user));
-      navigate("/dashboard/learner");
+      const user = normalizeUserData(response.user) ?? response.user;
+      saveAuthSession({ access_token: response.access_token, user });
+      navigate(getDashboardRoute(user?.role || "learner"));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed. Please try again.");
     } finally {

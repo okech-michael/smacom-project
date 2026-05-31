@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Recycle, ListChecks, Coins, BarChart3, Upload, MapPin, Navigation } from "lucide-react";
+import { useDashboardAuth } from "@/hooks/useDashboardAuth";
+import { getRoleLabel } from "@/lib/api";
 
 const NAV: NavItem[] = [
   { label: "Report Waste", to: "/dashboard/producer", icon: Recycle },
@@ -26,11 +28,20 @@ const SUBTYPES: Record<string, string[]> = {
 };
 
 export default function ProducerDashboard() {
+  const { user, loading: authLoading } = useDashboardAuth("producer");
   const [category, setCategory] = useState("food");
   const [locMode, setLocMode] = useState<"gps" | "address">("gps");
 
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading dashboard...</div>;
+  }
+
+  if (!user) {
+    return null;
+  }
+
   return (
-    <DashboardShell role="producer" roleLabel="Waste Producer" userName="Green Grocer Market" nav={NAV}>
+    <DashboardShell role="producer" roleLabel={getRoleLabel(user.role)} userName={user.full_name || user.email} nav={NAV}>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold">Report waste</h1>

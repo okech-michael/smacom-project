@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { BookOpen, GraduationCap, Award, LifeBuoy, Play, Check } from "lucide-react";
 import { useEffect, useState } from "react";
-import { API_BASE_URL } from "@/lib/api";
+import { API_BASE_URL, getRoleLabel } from "@/lib/api";
+import { useDashboardAuth } from "@/hooks/useDashboardAuth";
 import { Logo } from "@/components/smacom/Logo";
 import { COURSES } from "@/lib/mock-data";
 
@@ -17,6 +18,7 @@ const NAV: NavItem[] = [
 ];
 
 export default function LearnerDashboard() {
+  const { user, loading: authLoading } = useDashboardAuth("learner");
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,8 +42,16 @@ export default function LearnerDashboard() {
     fetchCourses();
   }, []);
 
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading dashboard...</div>;
+  }
+
+  if (!user) {
+    return null;
+  }
+
   return (
-    <DashboardShell role="learner" roleLabel="Learner" userName="Brian Mutua" nav={NAV}>
+    <DashboardShell role="learner" roleLabel={getRoleLabel(user.role)} userName={user.full_name || user.email} nav={NAV}>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold">Learning platform</h1>
