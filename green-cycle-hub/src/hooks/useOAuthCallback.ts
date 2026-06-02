@@ -38,22 +38,28 @@ export function useOAuthCallback() {
       localStorage.setItem('token_expires_at', expiresAt.toString());
     }
 
-    const fetchUser = async () => {
+    // Clear fragment from URL immediately
+    window.history.replaceState({}, document.title, window.location.pathname);
+
+    // Fetch user data and route to the correct dashboard
+    const fetchUserAndNavigate = async () => {
       try {
         const user = await getCurrentUser(accessToken);
-        localStorage.setItem('user', JSON.stringify(user));
-        navigate(getDashboardRoute(user?.role || 'learner'));
+        if (user && user.id) {
+          localStorage.setItem('user', JSON.stringify(user));
+          navigate(getDashboardRoute(user.role || 'learner'));
+        } else {
+          // If user data is invalid, still navigate but to learner dashboard
+          console.warn('User data is invalid, navigating to learner dashboard');
+          navigate('/dashboard/learner');
+        }
       } catch (fetchError) {
         console.error('Failed to fetch user:', fetchError);
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('user');
-        navigate('/login');
+        // Navigate to learner dashboard anyway - user data will be fetched by dashboard component
+        navigate('/dashboard/learner');
       }
     };
 
-    // Fetch user data and route to the correct dashboard
-    fetchUser();
-
-    window.history.replaceState({}, document.title, window.location.pathname);
+    fetchUserAndNavigate();
   }, [navigate]);
 }
