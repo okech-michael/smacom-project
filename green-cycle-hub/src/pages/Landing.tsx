@@ -456,7 +456,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <SectionHeader eyebrow="Built for everyone" title="Who is SMACOM for?" subtitle="Every role in the waste-to-wealth chain has a dedicated, purpose-built experience." />
           <motion.div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-14" variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            {ROLES.map((r, i) => (
+            {ROLES.filter(r => r.id !== 'admin').map((r, i) => (
               <motion.div key={r.id} variants={fadeUp} custom={i}>
                 <motion.div
                   className="group relative rounded-2xl border border-white/8 bg-gradient-to-br from-white/5 to-transparent p-6 hover:border-emerald-500/30 transition-all duration-300 cursor-pointer"

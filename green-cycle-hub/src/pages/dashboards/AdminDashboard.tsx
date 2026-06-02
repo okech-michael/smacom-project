@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { LayoutDashboard, Activity, Users, Receipt, TrendingUp, BookOpen, FileText, Download, Trash, Pencil } from "lucide-react";
-import { IOT_UNITS, COURSES, PRODUCTION_TREND } from "@/lib/mock-data";
+import { useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { getAdminStats, getRoleLabel } from "@/lib/api";
 import { useDashboardAuth } from "@/hooks/useDashboardAuth";
-import { getRoleLabel } from "@/lib/api";
 
 const NAV: NavItem[] = [
   { label: "Overview", to: "/dashboard/admin", icon: LayoutDashboard },
@@ -22,15 +22,59 @@ const NAV: NavItem[] = [
   { label: "Reports", to: "/dashboard/admin?tab=reports", icon: FileText },
 ];
 
+const IOT_UNITS = [
+  { name: "Unit 1 West", temp: 62, moisture: 58, co2: 1240, fill: 74, stage: "Active Composting", progress: 65, status: "optimal" as const },
+  { name: "Unit 2 East", temp: 42, moisture: 61, co2: 890, fill: 52, stage: "Active Composting", progress: 40, status: "alert" as const },
+  { name: "Unit 3 North", temp: 58, moisture: 87, co2: 1100, fill: 87, stage: "Maturation", progress: 80, status: "warning" as const },
+];
+
+const PRODUCTION_TREND = [
+  { month: "Dec", compost: 14, feed: 6 },
+  { month: "Jan", compost: 18, feed: 8 },
+  { month: "Feb", compost: 16, feed: 7 },
+  { month: "Mar", compost: 22, feed: 10 },
+  { month: "Apr", compost: 19, feed: 11 },
+  { month: "May", compost: 21, feed: 12 },
+];
+
+function Metric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="space-y-1">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="text-lg font-bold">{value}</p>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const { user, loading: authLoading } = useDashboardAuth("admin");
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (authLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading dashboard...</div>;
+  useEffect(() => {
+    async function loadStats() {
+      if (!user) return;
+      try {
+        const token = localStorage.getItem('access_token');
+        if (token) {
+          const adminStats = await getAdminStats(token);
+          setStats(adminStats);
+        }
+      } catch (error) {
+        console.error("Failed to load admin stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadStats();
+  }, [user]);
+
+  if (authLoading || loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading admin dashboard...</div>;
   }
 
-  if (!user) {
-    return null;
+  if (!user || user.role !== 'admin') {
+    return <div className="min-h-screen flex items-center justify-center"><p>Access Denied</p></div>;
   }
 
   return (
@@ -54,10 +98,10 @@ export default function AdminDashboard() {
 
           <TabsContent value="overview" className="mt-6 space-y-6">
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard label="Waste Collected (Month)" value="42 MT" trend="+8% MoM" />
-              <StatCard label="Compost Produced" value="21 MT" />
-              <StatCard label="Platform Revenue" value="KES 128,400" />
-              <StatCard label="Active Users" value="3,214" />
+              <StatCard label="Waste Collected (Month)" value={`${stats?.waste_collected || 42} MT`} trend="+8% MoM" />
+              <StatCard label="Compost Produced" value={`${stats?.compost_produced || 21} MT`} />
+              <StatCard label="Platform Revenue" value={`KES ${stats?.revenue || 128400}`} />
+              <StatCard label="Active Users" value={`${stats?.active_users || 3214}`} />
             </div>
 
             <Card className="p-6 border-primary/30">
@@ -66,10 +110,10 @@ export default function AdminDashboard() {
                 <span className="text-xs font-medium text-primary uppercase tracking-widest">Admin view only</span>
               </div>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <Metric label="CO₂ Saved" value="18.4 Tonnes" />
-                <Metric label="Waste Diverted" value="42 MT" />
-                <Metric label="Carbon Credits" value="9.2" />
-                <Metric label="Environmental Score" value="84/100" />
+                <Metric label="CO₂ Saved" value={`${stats?.co2_saved || 18.4} Tonnes`} />
+                <Metric label="Waste Diverted" value={`${stats?.waste_diverted || 42} MT`} />
+                <Metric label="Carbon Credits" value={`${stats?.carbon_credits || 9.2}`} />
+                <Metric label="Environmental Score" value={`${stats?.environmental_score || 84}/100`} />
               </div>
             </Card>
 
@@ -100,40 +144,31 @@ export default function AdminDashboard() {
           </TabsContent>
 
           <TabsContent value="users" className="mt-6">
-            <Card>
-              <div className="p-4 border-b border-border flex flex-wrap items-center justify-between gap-3">
-                <h2 className="font-semibold">Users</h2>
-                <Select defaultValue="all">
-                  <SelectTrigger className="w-[180px] h-9"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All roles</SelectItem>
-                    <SelectItem value="producer">Producer</SelectItem>
-                    <SelectItem value="processor">Processor</SelectItem>
-                    <SelectItem value="farmer">Farmer</SelectItem>
-                    <SelectItem value="learner">Learner</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <Card className="p-6">
               <Table>
                 <TableHeader>
-                  <TableRow><TableHead>Name</TableHead><TableHead>Role</TableHead><TableHead>Status</TableHead><TableHead>Registered</TableHead><TableHead className="text-right">Actions</TableHead></TableRow>
+                  <TableRow>
+                    <TableHead>User</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Joined</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
                 </TableHeader>
                 <TableBody>
                   {[
-                    ["Wanjiku Mwangi","Farmer","optimal","Verified","12 Apr 2026"],
-                    ["GreenCycle Processors","Processor","optimal","Verified","04 Mar 2026"],
-                    ["Sarit Centre Foods","Producer","pending","Pending","05 May 2026"],
-                    ["Brian Mutua","Learner","optimal","Verified","18 Apr 2026"],
-                    ["EcoFeed Africa","Processor","alert","Suspended","22 Feb 2026"],
-                  ].map((r, i) => (
+                    { name: "John Producer", role: "producer", status: "optimal", date: "Jan 2026" },
+                    { name: "Jane Processor", role: "processor", status: "optimal", date: "Feb 2026" },
+                    { name: "Bob Farmer", role: "farmer", status: "optimal", date: "Mar 2026" },
+                  ].map((u, i) => (
                     <TableRow key={i}>
-                      <TableCell className="font-medium">{r[0]}</TableCell>
-                      <TableCell>{r[1]}</TableCell>
-                      <TableCell><StatusBadge status={r[2] as Status} label={r[3]} /></TableCell>
-                      <TableCell>{r[4]}</TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">Verify</Button>
+                      <TableCell className="font-medium">{u.name}</TableCell>
+                      <TableCell className="capitalize">{u.role}</TableCell>
+                      <TableCell><StatusBadge status={u.status as Status} label="Active" /></TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{u.date}</TableCell>
+                      <TableCell className="text-right space-x-2">
                         <Button variant="ghost" size="sm"><Pencil className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="sm"><Trash className="h-4 w-4 text-destructive" /></Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -142,116 +177,33 @@ export default function AdminDashboard() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="tx" className="mt-6 space-y-4">
-            <Card className="p-4 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <span className="inline-flex items-center justify-center h-7 min-w-7 px-2 rounded-full bg-warning text-warning-foreground text-xs font-semibold">8</span>
-                <span className="font-medium">Pending orders need approval</span>
-              </div>
-              <Button>Approve all orders</Button>
-            </Card>
-            <Card>
-              <Table>
-                <TableHeader>
-                  <TableRow><TableHead>ID</TableHead><TableHead>Type</TableHead><TableHead>Amount</TableHead><TableHead>Commission</TableHead><TableHead>Date</TableHead><TableHead>Status</TableHead></TableRow>
-                </TableHeader>
-                <TableBody>
-                  {[
-                    ["TX-9042","Marketplace Purchase","KES 9,000","7%","04 May 2026","optimal","Settled"],
-                    ["TX-9041","Disposal Fee","KES 350","5%","05 May 2026","pending","Pending"],
-                    ["TX-9040","Marketplace Purchase","KES 4,800","7%","04 May 2026","optimal","Settled"],
-                    ["TX-9039","Disposal Fee","KES 480","5%","03 May 2026","optimal","Settled"],
-                  ].map((r) => (
-                    <TableRow key={r[0]}>
-                      <TableCell className="font-medium">{r[0]}</TableCell>
-                      <TableCell>{r[1]}</TableCell>
-                      <TableCell>{r[2]}</TableCell>
-                      <TableCell>{r[3]}</TableCell>
-                      <TableCell>{r[4]}</TableCell>
-                      <TableCell><StatusBadge status={r[5] as Status} label={r[6]} /></TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+          <TabsContent value="tx" className="mt-6">
+            <Card className="p-6">
+              <p className="text-sm text-muted-foreground">Transaction history will be loaded from API</p>
             </Card>
           </TabsContent>
 
           <TabsContent value="revenue" className="mt-6">
-            <div className="grid sm:grid-cols-3 gap-4">
-              <StatCard label="Disposal Fee Revenue (5%)" value="KES 42,000" />
-              <StatCard label="Marketplace Commission (7%)" value="KES 86,400" />
-              <StatCard label="Total SMACOM Revenue" value="KES 128,400" trend="+12% MoM" />
-            </div>
-          </TabsContent>
-
-          <TabsContent value="learning" className="mt-6 space-y-4">
-            <div className="grid sm:grid-cols-3 gap-4">
-              <StatCard label="Active Courses" value="14" />
-              <StatCard label="Total Enrolments" value="1,082" />
-              <StatCard label="Course Revenue" value="KES 1.84M" />
-            </div>
-            <Card>
-              <Table>
-                <TableHeader>
-                  <TableRow><TableHead>Title</TableHead><TableHead>Instructor</TableHead><TableHead>Enrolments</TableHead><TableHead>Fee</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Actions</TableHead></TableRow>
-                </TableHeader>
-                <TableBody>
-                  {COURSES.map((c, i) => (
-                    <TableRow key={c.title}>
-                      <TableCell className="font-medium">{c.title}</TableCell>
-                      <TableCell>{c.instructor}</TableCell>
-                      <TableCell>{[420, 318, 344][i]}</TableCell>
-                      <TableCell>{c.fee}</TableCell>
-                      <TableCell><StatusBadge status="optimal" label="Active" /></TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm"><Pencil className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="sm"><Trash className="h-4 w-4" /></Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+            <Card className="p-6">
+              <p className="text-sm text-muted-foreground">Revenue analytics will be loaded from API</p>
             </Card>
           </TabsContent>
 
-          <TabsContent value="reports" className="mt-6 space-y-4">
+          <TabsContent value="learning" className="mt-6">
             <Card className="p-6">
-              <h2 className="font-semibold mb-4">Generate report</h2>
-              <div className="flex flex-wrap items-center gap-3">
-                <Select defaultValue="weekly">
-                  <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="weekly">Weekly</SelectItem>
-                    <SelectItem value="monthly">Monthly</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button>Generate report</Button>
-                <Button variant="outline"><Download className="h-4 w-4" />Download PDF</Button>
-                <Button variant="outline"><Download className="h-4 w-4" />Download CSV</Button>
-              </div>
+              <p className="text-sm text-muted-foreground">Learning statistics will be loaded from API</p>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="reports" className="mt-6">
             <Card className="p-6">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Last generated</p>
-              <h3 className="font-semibold mt-1">Monthly platform report — April 2026</h3>
-              <p className="text-sm text-muted-foreground mt-1">Generated 01 May 2026 · 18 pages</p>
-              <div className="grid sm:grid-cols-3 gap-3 mt-4">
-                <div className="rounded-md border border-border p-3"><p className="text-xs text-muted-foreground">Waste collected</p><p className="font-semibold">38 MT</p></div>
-                <div className="rounded-md border border-border p-3"><p className="text-xs text-muted-foreground">Revenue</p><p className="font-semibold">KES 114,200</p></div>
-                <div className="rounded-md border border-border p-3"><p className="text-xs text-muted-foreground">New users</p><p className="font-semibold">218</p></div>
+              <div className="flex items-center gap-2">
+                <Button><Download className="h-4 w-4 mr-2" />Export Monthly Report</Button>
               </div>
             </Card>
           </TabsContent>
         </Tabs>
       </div>
     </DashboardShell>
-  );
-}
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="text-xl font-bold mt-1">{value}</p>
-    </div>
   );
 }

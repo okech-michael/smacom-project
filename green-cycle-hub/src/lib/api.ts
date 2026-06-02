@@ -113,3 +113,204 @@ export async function getCurrentUser(token: string) {
   const payload = await response.json();
   return normalizeUserData(payload);
 }
+
+// ============================================
+// DASHBOARD DATA FETCHING FUNCTIONS
+// ============================================
+
+export interface DashboardStats {
+  waste_collected?: number;
+  compost_produced?: number;
+  revenue?: number;
+  active_users?: number;
+  co2_saved?: number;
+  environmental_score?: number;
+}
+
+export interface IoTUnit {
+  id?: string;
+  name: string;
+  temp: number;
+  moisture: number;
+  co2: number;
+  fill: number;
+  stage: string;
+  progress: number;
+  status: 'optimal' | 'warning' | 'alert';
+}
+
+export interface Course {
+  id?: string;
+  title: string;
+  instructor: string;
+  duration: string;
+  fee: string;
+  category?: string;
+  youtube_url?: string;
+  description?: string;
+  modules?: number;
+}
+
+export interface PickupRequest {
+  id: string;
+  producer: string;
+  type: string;
+  quantity: number;
+  distance: number;
+  address: string;
+}
+
+export interface Notification {
+  id: number;
+  title: string;
+  time: string;
+  level: 'info' | 'warning' | 'alert';
+}
+
+// Producer Dashboard APIs
+export async function getProducerStats(token: string): Promise<DashboardStats> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/waste/stats`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch stats');
+    const payload = await response.json();
+    return payload.data ?? {};
+  } catch {
+    return {};
+  }
+}
+
+export async function getPickupRequests(token: string): Promise<PickupRequest[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/waste/pickup-requests`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch pickup requests');
+    const payload = await response.json();
+    return payload.data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+// Processor Dashboard APIs
+export async function getIoTUnits(token: string): Promise<IoTUnit[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/iot/units`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch IoT units');
+    const payload = await response.json();
+    return payload.data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+// Farmer Dashboard APIs
+export async function getMarketplaceProducts(token: string) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/marketplace/products`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch products');
+    const payload = await response.json();
+    return payload.data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+// Learning APIs
+export async function getCourses(token?: string): Promise<Course[]> {
+  try {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/learning/courses`, { headers });
+    if (!response.ok) throw new Error('Failed to fetch courses');
+    const payload = await response.json();
+    return payload.data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function enrollCourse(token: string, courseId: string) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/learning/enroll`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ course_id: courseId }),
+    });
+    if (!response.ok) throw new Error('Failed to enroll');
+    return await response.json();
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function getUserCourses(token: string): Promise<Course[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/learning/my-courses`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch user courses');
+    const payload = await response.json();
+    return payload.data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+// Admin APIs
+export async function getAdminStats(token: string): Promise<DashboardStats> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/admin/stats`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch admin stats');
+    const payload = await response.json();
+    return payload.data ?? {};
+  } catch {
+    return {};
+  }
+}
+
+export async function createCourse(token: string, courseData: Course) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/learning/courses`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(courseData),
+    });
+    if (!response.ok) throw new Error('Failed to create course');
+    return await response.json();
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function getNotifications(token: string): Promise<Notification[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/notifications`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch notifications');
+    const payload = await response.json();
+    return payload.data ?? [];
+  } catch {
+    return [];
+  }
+}
