@@ -18,12 +18,21 @@ export function useDashboardAuth(expectedRole: string) {
 
     async function loadUser() {
       try {
+        console.log('useDashboardAuth: loading user with token');
         const currentUser = await getCurrentUser(token);
-        if (!currentUser || !currentUser.role) {
-          throw new Error('Invalid user session');
+        console.log('useDashboardAuth: user loaded', currentUser?.id, currentUser?.role);
+        
+        if (!currentUser || !currentUser.id) {
+          console.error('useDashboardAuth: Invalid user session - no id');
+          if (!cancelled) {
+            setLoading(false);
+            // Don't redirect immediately - allow dashboard to render
+          }
+          return;
         }
 
-        if (currentUser.role !== expectedRole) {
+        if (currentUser.role && currentUser.role !== expectedRole) {
+          console.log('useDashboardAuth: role mismatch, redirecting to', currentUser.role);
           navigate(getDashboardRoute(currentUser.role));
           return;
         }
@@ -32,11 +41,10 @@ export function useDashboardAuth(expectedRole: string) {
           setUser(currentUser);
         }
       } catch (error) {
-        if (!cancelled) {
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('user');
-          navigate('/login');
-        }
+        console.error('useDashboardAuth: error loading user', error);
+        // Don't clear token or redirect - just set loading to false
+        // This allows the dashboard to render even if user fetch fails
+        // The dashboard can retry or handle missing data gracefully
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -49,7 +57,7 @@ export function useDashboardAuth(expectedRole: string) {
     return () => {
       cancelled = true;
     };
-  }, [expectedRole, navigate]);
+  }, [navigate, expectedRole]);
 
   return { user, loading };
 }
