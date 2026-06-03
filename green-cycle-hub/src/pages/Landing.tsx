@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Logo } from "@/components/smacom/Logo";
+import { Header } from "@/components/smacom/Header";
+import { SEOSchema } from "@/components/smacom/SEOSchema";
 import { ProductCard } from "@/components/smacom/ProductCard";
 import { CourseCard } from "@/components/smacom/CourseCard";
 import { IoTUnitCard } from "@/components/smacom/IoTUnitCard";
@@ -40,22 +42,6 @@ const IMPACT = [
   { value: 620, display: "620", unit: "T", label: "CO₂ Saved", icon: Wind },
   { value: 480, display: "480", unit: "MT", label: "Compost Produced", icon: Droplets },
   { value: 3200, display: "3,200", unit: "+", label: "Registered Users", icon: Globe },
-];
-
-const NAV_LINKS = [
-  { href: "#how", label: "How it works" },
-  { href: "#roles", label: "Who it's for" },
-  { href: "#marketplace", label: "Marketplace" },
-  { href: "#learning", label: "Learning" },
-  { href: "#plans", label: "Plans" },
-];
-
-const MOBILE_NAV = [
-  { icon: Home, label: "Home", href: "#" },
-  { icon: Store, label: "Market", href: "#marketplace" },
-  { icon: GraduationCap, label: "Learn", href: "#learning" },
-  { icon: BarChart2, label: "Dashboard", href: "#" },
-  { icon: User, label: "Profile", href: "/login" },
 ];
 
 const TICKER_ITEMS = [
@@ -238,9 +224,7 @@ function IoTWidget() {
 /* ─── Main Landing Page ──────────────────────────────────── */
 
 export default function Landing() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeMobileTab, setActiveMobileTab] = useState(0);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);
@@ -248,8 +232,18 @@ export default function Landing() {
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
+  const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://smacom.co.ke";
+  const logoUrl = `${siteUrl}/logo.jpg`;
+
   return (
     <div className="min-h-screen bg-[#050c08] text-white overflow-x-hidden">
+      {/* SEO Schema */}
+      <SEOSchema
+        title="SMACOM Solutions — Turn Organic Waste Into Wealth"
+        description="SMACOM connects waste producers, bio-processors and farmers in one intelligent platform — powered by IoT sensors, AI recommendations and a live marketplace."
+        url={siteUrl}
+        image={logoUrl}
+      />
 
       {/* ── Ambient Background ── */}
       <div className="fixed inset-0 pointer-events-none z-0">
@@ -263,60 +257,8 @@ export default function Landing() {
         />
       </div>
 
-      {/* ── Nav ── */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? "bg-black/60 backdrop-blur-xl border-b border-white/5 shadow-2xl" : "bg-transparent"}`}>
-        <div className="max-w-7xl mx-auto px-6 flex h-16 items-center justify-between">
-          <Logo />
-          <nav className="hidden md:flex items-center gap-7">
-            {NAV_LINKS.map(({ href, label }) => (
-              <a key={href} href={href} className="text-sm font-medium text-white/60 hover:text-white transition-colors duration-200">
-                {label}
-              </a>
-            ))}
-          </nav>
-          <div className="flex items-center gap-3">
-            <Button asChild variant="ghost" size="sm" className="hidden md:flex text-white/70 hover:text-white hover:bg-white/10">
-              <Link to="/login">Login</Link>
-            </Button>
-            <Button asChild size="sm" className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold shadow-lg shadow-emerald-500/25">
-              <Link to="/register">Get Started</Link>
-            </Button>
-            <button className="md:hidden p-2 text-white/70" onClick={() => setMobileMenuOpen(true)}>
-              <Menu className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* ── Mobile Drawer ── */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <>
-            <motion.div className="fixed inset-0 bg-black/70 z-50 md:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMobileMenuOpen(false)} />
-            <motion.div
-              className="fixed top-0 right-0 bottom-0 w-72 bg-[#070f0a] border-l border-white/10 z-50 p-6 md:hidden"
-              initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 25 }}
-            >
-              <div className="flex items-center justify-between mb-8">
-                <Logo />
-                <button onClick={() => setMobileMenuOpen(false)} className="text-white/50 hover:text-white"><X className="h-5 w-5" /></button>
-              </div>
-              <nav className="flex flex-col gap-1">
-                {NAV_LINKS.map(({ href, label }) => (
-                  <a key={href} href={href} onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/5 transition-all font-medium">
-                    {label} <ChevronRight className="h-4 w-4 opacity-40" />
-                  </a>
-                ))}
-              </nav>
-              <div className="absolute bottom-8 left-6 right-6 space-y-2">
-                <Button asChild className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-bold"><Link to="/register">Get Started Free</Link></Button>
-                <Button asChild variant="outline" className="w-full border-white/10 text-white/70"><Link to="/login">Login</Link></Button>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      {/* ── Semantic Header with Navigation ── */}
+      <Header scrolled={scrolled} />
 
       {/* ── Hero ── */}
       <section className="relative z-10 min-h-screen flex flex-col justify-center pt-16 pb-20 px-6">
@@ -425,7 +367,7 @@ export default function Landing() {
       </div>
 
       {/* ── How It Works ── */}
-      <section id="how" className="relative z-10 py-28 px-6 border-t border-white/5">
+      <section id="how-it-works" className="relative z-10 py-28 px-6 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
           <SectionHeader eyebrow="How it works" title="From waste to wealth in six steps" subtitle="A seamless end-to-end flow connecting every actor in the circular economy." />
 
@@ -451,8 +393,8 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Roles ── */}
-      <section id="roles" className="relative z-10 py-28 px-6 border-t border-white/5">
+      {/* ── Roles / Who It's For ── */}
+      <section id="who-its-for" className="relative z-10 py-28 px-6 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
           <SectionHeader eyebrow="Built for everyone" title="Who is SMACOM for?" subtitle="Every role in the waste-to-wealth chain has a dedicated, purpose-built experience." />
           <motion.div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-14" variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }}>
