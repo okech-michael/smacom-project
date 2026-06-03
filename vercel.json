@@ -26,8 +26,11 @@
       "dest": "/api/index.py"
     },
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/api/index.py"
+      "dest": "/green-cycle-hub/dist/index.html"
     }
   ],
   "env": {
