@@ -99,19 +99,48 @@ export async function login(email: string, password: string) {
 }
 
 export async function getCurrentUser(token: string) {
-  const response = await fetch(`${API_BASE_URL}/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-  });
+  const url = `${API_BASE_URL}/auth/me`;
+  console.log('getCurrentUser: fetching from', url);
+  
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch user');
+    console.log('getCurrentUser: response status', response.status);
+    
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('getCurrentUser: error response', errorData);
+      
+      if (response.status === 401) {
+        throw new Error('Invalid or expired authentication token');
+      } else if (response.status === 404) {
+        throw new Error('User profile not found');
+      } else {
+        throw new Error(`API error (${response.status}): Failed to fetch user`);
+      }
+    }
+
+    const payload = await response.json();
+    console.log('getCurrentUser: received payload', { success: !!payload, hasData: 'data' in payload });
+    
+    const user = normalizeUserData(payload);
+    if (!user) {
+      console.error('getCurrentUser: normalization failed', payload);
+      throw new Error('Failed to parse user data');
+    }
+    
+    console.log('getCurrentUser: success', user.id);
+    return user;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('getCurrentUser: exception', message);
+    throw error;
   }
-
-  const payload = await response.json();
-  return normalizeUserData(payload);
 }
 
 // ============================================

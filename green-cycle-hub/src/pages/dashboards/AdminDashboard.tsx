@@ -47,7 +47,7 @@ function Metric({ label, value }: { label: string; value: string }) {
 }
 
 export default function AdminDashboard() {
-  const { user, loading: authLoading } = useDashboardAuth("admin");
+  const { user, loading: authLoading, error: authError } = useDashboardAuth("admin");
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -73,8 +73,37 @@ export default function AdminDashboard() {
     return <div className="min-h-screen flex items-center justify-center">Loading admin dashboard...</div>;
   }
 
-  if (!user || user.role !== 'admin') {
-    return <div className="min-h-screen flex items-center justify-center"><p>Access Denied</p></div>;
+  if (authError || !user || user.role !== 'admin') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background">
+        <div className="max-w-md w-full space-y-4 text-center">
+          <div className="text-5xl">⚠️</div>
+          <h1 className="text-2xl font-bold">Unable to Load Dashboard</h1>
+          <p className="text-muted-foreground">
+            {authError || "Failed to load your profile or access denied. Please log in again."}
+          </p>
+          <div className="pt-4 space-y-2">
+            <Button 
+              onClick={() => window.location.reload()}
+              className="w-full"
+            >
+              Retry
+            </Button>
+            <Button 
+              onClick={() => {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+              }}
+              variant="outline"
+              className="w-full"
+            >
+              Log In Again
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -5,11 +5,14 @@ import { AuthUser, getCurrentUser, getDashboardRoute } from "@/lib/api";
 export function useDashboardAuth(expectedRole: string) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
     if (!token) {
+      setError('No authentication token found. Please log in.');
+      setLoading(false);
       navigate('/login');
       return;
     }
@@ -25,8 +28,9 @@ export function useDashboardAuth(expectedRole: string) {
         if (!currentUser || !currentUser.id) {
           console.error('useDashboardAuth: Invalid user session - no id');
           if (!cancelled) {
+            setError('Failed to load user profile. Please log in again.');
             setLoading(false);
-            // Don't redirect immediately - allow dashboard to render
+            // Don't redirect immediately - allow dashboard to show error
           }
           return;
         }
@@ -39,12 +43,14 @@ export function useDashboardAuth(expectedRole: string) {
 
         if (!cancelled) {
           setUser(currentUser);
+          setError(null);
         }
       } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to load user profile';
         console.error('useDashboardAuth: error loading user', error);
-        // Don't clear token or redirect - just set loading to false
-        // This allows the dashboard to render even if user fetch fails
-        // The dashboard can retry or handle missing data gracefully
+        if (!cancelled) {
+          setError(`Authentication error: ${errorMessage}. Please try logging in again.`);
+        }
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -59,5 +65,5 @@ export function useDashboardAuth(expectedRole: string) {
     };
   }, [navigate, expectedRole]);
 
-  return { user, loading };
+  return { user, loading, error };
 }

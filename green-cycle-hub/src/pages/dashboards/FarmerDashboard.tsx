@@ -24,15 +24,44 @@ const NAV: NavItem[] = [
 ];
 
 export default function FarmerDashboard() {
-  const { user, loading: authLoading } = useDashboardAuth("farmer");
+  const { user, loading: authLoading, error: authError } = useDashboardAuth("farmer");
   const [price, setPrice] = useState([0, 5000]);
 
   if (authLoading) {
     return <div className="min-h-screen flex items-center justify-center">Loading dashboard...</div>;
   }
 
-  if (!user) {
-    return null;
+  if (authError || !user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background">
+        <div className="max-w-md w-full space-y-4 text-center">
+          <div className="text-5xl">⚠️</div>
+          <h1 className="text-2xl font-bold">Unable to Load Dashboard</h1>
+          <p className="text-muted-foreground">
+            {authError || "Failed to load your profile. Please try again or log in."}
+          </p>
+          <div className="pt-4 space-y-2">
+            <Button 
+              onClick={() => window.location.reload()}
+              className="w-full"
+            >
+              Retry
+            </Button>
+            <Button 
+              onClick={() => {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+              }}
+              variant="outline"
+              className="w-full"
+            >
+              Log In Again
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
