@@ -30,7 +30,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/green-cycle-hub/dist/index.html"
+      "dest": "/dist/index.html"
     }
   ],
   "env": {
