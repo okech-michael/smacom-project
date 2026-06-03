@@ -34,40 +34,54 @@ export const PRODUCTS = [
 
 export const COURSES = [
   {
-    title: "Composting Fundamentals",
-    instructor: "WasteWise Kenya",
-    youtube_channel: "WasteWise Kenya",
-    duration: "6 hours",
+    id: "course-001",
+    title: "Waste Management Safety Training",
+    instructor: "Safety First Institute",
+    youtube_channel: "SafetyTraining",
+    duration: "45 minutes",
     fee: "KES 2,500",
     modules: 8,
-    youtube_url: "https://www.youtube.com/embed/7GgiVfHkQdA" // Composting basics
+    youtube_url: "https://youtu.be/cqJ-ZM4UZNk"
   },
   {
-    title: "Compost Heap Management 101",
-    instructor: "Recycling Revolution",
-    youtube_channel: "Recycling Revolution",
-    duration: "4 hours",
-    fee: "KES 1,800",
+    id: "course-002",
+    title: "Hazardous Waste Management",
+    instructor: "Hazmat Professionals",
+    youtube_channel: "HazmatAcademy",
+    duration: "52 minutes",
+    fee: "KES 3,200",
     modules: 6,
-    youtube_url: "https://www.youtube.com/embed/1w2KQbKpKqA" // Compost heap management
+    youtube_url: "https://youtu.be/sfsOWSO5H6s"
   },
   {
-    title: "Advanced Composting Techniques",
-    instructor: "Circular Garden Hub",
-    youtube_channel: "Circular Garden Hub",
-    duration: "3 hours",
-    fee: "KES 1,200",
+    id: "course-003",
+    title: "Municipal Solid Waste Management",
+    instructor: "Urban Waste Solutions",
+    youtube_channel: "WasteManagementTV",
+    duration: "38 minutes",
+    fee: "KES 1,800",
     modules: 5,
-    youtube_url: "https://www.youtube.com/embed/2R7h6u5Q2vA" // Advanced composting techniques
+    youtube_url: "https://youtu.be/cjIacnNRLHE"
   },
   {
-    title: "Waste Recycling & Circular Living",
-    instructor: "GreenCycle Channel",
-    youtube_channel: "GreenCycle Channel",
-    duration: "5 hours",
+    id: "course-004",
+    title: "Singapore Waste Management Strategy",
+    instructor: "City Planning Academy",
+    youtube_channel: "PlanningExperts",
+    duration: "28 minutes",
+    fee: "KES 1,500",
+    modules: 4,
+    youtube_url: "https://www.youtube.com/shorts/zewegWZD0dU"
+  },
+  {
+    id: "course-005",
+    title: "Ways of Waste Management",
+    instructor: "Environmental Solutions",
+    youtube_channel: "EcoLearning",
+    duration: "42 minutes",
     fee: "KES 2,000",
     modules: 7,
-    youtube_url: "https://www.youtube.com/embed/3G9ZjT0KxkY" // Waste recycling principles
+    youtube_url: "https://youtu.be/o1b4koIeBzQ"
   },
 ];
 

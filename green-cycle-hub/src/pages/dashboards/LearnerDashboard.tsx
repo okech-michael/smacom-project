@@ -1,5 +1,6 @@
 import { DashboardShell, NavItem } from "@/components/smacom/DashboardShell";
 import { CourseCard } from "@/components/smacom/CourseCard";
+import { VideoModal } from "@/components/smacom/VideoModal";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -8,6 +9,7 @@ import { useEffect, useState } from "react";
 import { getCourses, getRoleLabel, Course } from "@/lib/api";
 import { useDashboardAuth } from "@/hooks/useDashboardAuth";
 import { Logo } from "@/components/smacom/Logo";
+import { extractYouTubeVideoId, recordVideoStart, getCourseProgressById, getEstimatedProgress } from "@/lib/video-utils";
 
 const NAV: NavItem[] = [
   { label: "Catalogue", to: "/dashboard/learner", icon: BookOpen },
@@ -23,6 +25,8 @@ export default function LearnerDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [courseProgress, setCourseProgress] = useState<number>(0);
 
   useEffect(() => {
     async function fetchCourses() {
@@ -34,6 +38,9 @@ export default function LearnerDashboard() {
         setMyCourses(fetchedCourses.slice(0, 3)); // Demo: first 3 courses as "my courses"
         if (fetchedCourses.length > 0) {
           setSelectedCourse(fetchedCourses[0]);
+          // Get progress for first course
+          const progress = getEstimatedProgress(fetchedCourses[0].id || fetchedCourses[0].title);
+          setCourseProgress(progress);
         }
       } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : "Unknown error";
@@ -44,6 +51,25 @@ export default function LearnerDashboard() {
     }
     fetchCourses();
   }, []);
+
+  const handleSelectCourse = (course: Course) => {
+    setSelectedCourse(course);
+    const progress = getEstimatedProgress(course.id || course.title);
+    setCourseProgress(progress);
+  };
+
+  const handlePlayVideo = () => {
+    if (selectedCourse && selectedCourse.id) {
+      const videoId = extractYouTubeVideoId(selectedCourse.youtube_url || "");
+      if (videoId) {
+        recordVideoStart(selectedCourse.id, videoId, selectedCourse.title);
+        setIsVideoOpen(true);
+        // Update progress display
+        const progress = getEstimatedProgress(selectedCourse.id);
+        setCourseProgress(progress);
+      }
+    }
+  };
 
   if (authLoading) {
     return <div className="min-h-screen flex items-center justify-center">Loading dashboard...</div>;
@@ -81,6 +107,8 @@ export default function LearnerDashboard() {
       </div>
     );
   }
+
+  const selectedVideoId = selectedCourse?.youtube_url ? extractYouTubeVideoId(selectedCourse.youtube_url) : null;
 
   return (
     <DashboardShell role="learner" roleLabel={getRoleLabel(user.role)} userName={user.full_name || user.email} nav={NAV}>
@@ -131,18 +159,25 @@ export default function LearnerDashboard() {
           <TabsContent value="player" className="mt-6">
             <div className="grid lg:grid-cols-3 gap-5">
               <div className="lg:col-span-2 space-y-3">
-                {selectedCourse?.youtube_url ? (
-                  <div className="aspect-video rounded-md bg-black overflow-hidden">
-                    <iframe
-                      width="100%"
-                      height="100%"
-                      src={selectedCourse.youtube_url}
-                      title={selectedCourse.title}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="w-full h-full"
+                {selectedVideoId ? (
+                  <div className="aspect-video rounded-md bg-black overflow-hidden relative group">
+                    <img
+                      src={`https://img.youtube.com/vi/${selectedVideoId}/hqdefault.jpg`}
+                      alt={selectedCourse?.title}
+                      className="w-full h-full object-cover group-hover:brightness-75 transition-all"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
                     />
+                    <button
+                      onClick={handlePlayVideo}
+                      className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all"
+                      title="Play video"
+                    >
+                      <div className="inline-flex h-16 w-16 rounded-full bg-white/90 items-center justify-center group-hover:bg-white transition-colors shadow-lg">
+                        <Play className="h-7 w-7 ml-1 fill-current text-black" />
+                      </div>
+                    </button>
                   </div>
                 ) : (
                   <div className="aspect-video rounded-md bg-foreground/90 flex items-center justify-center">
@@ -152,11 +187,11 @@ export default function LearnerDashboard() {
                   </div>
                 )}
                 <Card className="p-4">
-                  <p className="text-sm text-muted-foreground">Module 3 of {selectedCourse?.modules || 8}</p>
+                  <p className="text-sm text-muted-foreground">Module {Math.floor(courseProgress / 20) + 1} of {selectedCourse?.modules || 5}</p>
                   <h2 className="font-semibold mt-0.5">{selectedCourse?.title || "Select a course to begin"}</h2>
                   <div className="mt-3 space-y-1.5">
-                    <div className="flex justify-between text-xs"><span className="text-muted-foreground">Course progress</span><span className="font-medium">45%</span></div>
-                    <div className="h-2 bg-secondary rounded-full overflow-hidden"><div className="h-full bg-primary" style={{ width: "45%" }} /></div>
+                    <div className="flex justify-between text-xs"><span className="text-muted-foreground">Course progress</span><span className="font-medium">{courseProgress}%</span></div>
+                    <div className="h-2 bg-secondary rounded-full overflow-hidden"><div className="h-full bg-primary transition-all" style={{ width: `${courseProgress}%` }} /></div>
                   </div>
                 </Card>
               </div>
@@ -166,7 +201,7 @@ export default function LearnerDashboard() {
                   {courses.slice(0, 5).map((course) => (
                     <button
                       key={course.id || course.title}
-                      onClick={() => setSelectedCourse(course)}
+                      onClick={() => handleSelectCourse(course)}
                       className={`w-full text-left rounded-md px-3 py-2 text-sm transition ${
                         selectedCourse?.id === course.id
                           ? "bg-accent text-accent-foreground"
@@ -205,6 +240,21 @@ export default function LearnerDashboard() {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Video Modal for course player */}
+        {selectedVideoId && selectedCourse && (
+          <VideoModal
+            isOpen={isVideoOpen}
+            onClose={() => setIsVideoOpen(false)}
+            videoId={selectedVideoId}
+            title={selectedCourse.title}
+            onPlayStart={() => {
+              if (selectedCourse.id) {
+                recordVideoStart(selectedCourse.id, selectedVideoId, selectedCourse.title);
+              }
+            }}
+          />
+        )}
       </div>
     </DashboardShell>
   );
