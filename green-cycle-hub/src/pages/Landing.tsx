@@ -55,6 +55,14 @@ const TICKER_ITEMS = [
   "🌍 Powering African Agriculture",
 ];
 
+const MOBILE_NAV = [
+  { icon: Home, label: "Home", href: "#" },
+  { icon: MapPin, label: "How it works", href: "#how-it-works" },
+  { icon: ShoppingCart, label: "Marketplace", href: "#marketplace" },
+  { icon: BookOpen, label: "Learning", href: "#learning" },
+  { icon: BarChart2, label: "Plans", href: "#plans" },
+];
+
 /* ─── Reusable Animations ────────────────────────────────── */
 
 const fadeUp = {
@@ -225,6 +233,7 @@ function IoTWidget() {
 
 export default function Landing() {
   const [scrolled, setScrolled] = useState(false);
+  const [activeMobileTab, setActiveMobileTab] = useState(0);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);
