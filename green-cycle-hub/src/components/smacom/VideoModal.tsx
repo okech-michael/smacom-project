@@ -23,7 +23,7 @@ export function VideoModal({ isOpen, onClose, videoId, title, onPlayStart }: Vid
       setHasStarted(true);
       onPlayStart?.();
     }
-  }, [isOpen, hasStarted, onPlayStart]);
+  }, [isOpen]);
 
   const handleIframeLoad = () => {
     setIsLoading(false);
