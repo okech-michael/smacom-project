@@ -7,10 +7,10 @@ class Settings(BaseSettings):
     # Authentication
     google_client_id: str = ""
     google_client_secret: str = ""
-    jwt_secret: str = ""  # MUST be set via environment variable
+    jwt_secret: str = ""
     
-    # Database
-    supabase_url: str = ""
+    # Database - Supabase
+    supabase_url: str = "https://azorfytyfrvacemalltq.supabase.co"
     supabase_service_role_key: str = ""
     supabase_anon_key: str = ""
 
@@ -33,23 +33,17 @@ class Settings(BaseSettings):
 
     # Application Settings
     debug: bool = False
-    environment: str = "development"
-    frontend_url: str = "http://localhost:3000"
+    environment: str = os.getenv("ENVIRONMENT", "production")
+    frontend_url: str = "https://www.smacom.co.ke"
     port: int = 8000
     
-    # CORS
+    # CORS - Production domain only
     allowed_origins: list[str] = [
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:3000",
-        "http://127.0.0.1:5173",
-        "http://127.0.0.1:5174",
-        "http://127.0.0.1:3000",
-        "http://localhost:8000",
+        "https://www.smacom.co.ke",
+        "https://smacom.co.ke",
     ]
 
     # MQTT/IoT - DISABLED FOR VERCEL
-    # These features will be re-enabled when backend moves to Railway
     mqtt_enabled: bool = False
     mqtt_broker_host: str = "disabled"
     mqtt_broker_port: int = 1883
@@ -65,17 +59,28 @@ class Settings(BaseSettings):
     def get_allowed_origins(self) -> list[str]:
         """Get allowed origins for CORS"""
         if self.environment == "production":
-            # In production on Vercel, frontend and backend share same domain
-            # Frontend served from root (/), API from /api/v1
-            # Must set FRONTEND_URL environment variable
-            frontend_url = os.getenv("FRONTEND_URL", "https://smacom.vercel.app")
-            return [frontend_url, frontend_url.replace("https://", "https://www.")]
-        return self.allowed_origins
+            return [
+                "https://www.smacom.co.ke",
+                "https://smacom.co.ke",
+            ]
+        # Development origins
+        return [
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "http://localhost:3000",
+            "http://127.0.0.1:5173",
+            "http://127.0.0.1:5174",
+            "http://127.0.0.1:3000",
+            "http://localhost:8000",
+        ]
 
 
 @lru_cache()
 def get_settings() -> Settings:
     return Settings()
+
+
+settings = get_settings()
 
 
 settings = get_settings()
