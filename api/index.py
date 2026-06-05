@@ -22,9 +22,9 @@ if not os.path.exists(backend_path):
 else:
     print(f"✓ Backend path added: {backend_path}")
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 import uvicorn
 
 from app.core.config import settings
@@ -110,42 +110,39 @@ if not frontend_dist:
 def serve_root():
     """Serve root index.html"""
     if not frontend_dist or not frontend_dist.exists():
-        return {
-            "status": "error",
-            "message": "Frontend dist not found",
-            "path": str(frontend_dist),
-            "debug": "Vercel serverless: Make sure npm build creates dist folder in green-cycle-hub",
-            "hint": "Check Vercel build logs at https://vercel.com/dashboard"
-        }, 503
+        raise HTTPException(
+            status_code=503,
+            detail="Frontend dist not found. Check Vercel build logs."
+        )
     
     index_path = frontend_dist / "index.html"
     if index_path.exists():
         return FileResponse(str(index_path), media_type="text/html")
     
-    return {
-        "status": "error",
-        "message": "index.html not found in dist",
-        "path": str(index_path)
-    }, 503
+    raise HTTPException(
+        status_code=503,
+        detail="index.html not found in dist"
+    )
 
 @app.get("/{full_path:path}")
 async def serve_spa(full_path: str):
     """Serve SPA - return index.html for all non-API routes"""
-    # Skip API routes
+    # Skip API routes - they should be handled by FastAPI routers
     if full_path.startswith("api/"):
-        return {"detail": "Not Found"}, 404
+        raise HTTPException(status_code=404, detail="Not Found")
     
     # Try to serve file directly (for assets, etc)
-    file_path = frontend_dist / full_path
-    if file_path.exists() and file_path.is_file() and file_path.stat().st_size > 0:
-        return FileResponse(str(file_path))
+    if frontend_dist and frontend_dist.exists():
+        file_path = frontend_dist / full_path
+        if file_path.exists() and file_path.is_file() and file_path.stat().st_size > 0:
+            return FileResponse(str(file_path))
+        
+        # Default to index.html for SPA routing
+        index_path = frontend_dist / "index.html"
+        if index_path.exists():
+            return FileResponse(str(index_path), media_type="text/html")
     
-    # Default to index.html for SPA routing
-    index_path = frontend_dist / "index.html"
-    if index_path.exists():
-        return FileResponse(str(index_path), media_type="text/html")
-    
-    return {"detail": "Not Found"}, 404
+    raise HTTPException(status_code=404, detail="Not Found")
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
