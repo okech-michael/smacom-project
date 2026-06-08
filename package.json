@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run vercel-build",
     "vercel-build": "vite build && cd backend && npm ci && cd ..",
     "lint": "eslint . --quiet",
     "lint:fix": "eslint . --fix",
