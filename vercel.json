@@ -1,29 +1,33 @@
 {
-  "version": 2,
-  "installCommand": "cd green-cycle-hub && npm install --legacy-peer-deps",
-  "buildCommand": "cd green-cycle-hub && npm run build",
+  "version": 3,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
   "builds": [
     {
-      "src": "green-cycle-hub/package.json",
+      "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "green-cycle-hub/dist"
+        "distDir": "dist",
+        "cleanUrls": true
       }
     },
     {
-      "src": "api/index.py",
-      "use": "@vercel/python",
+      "src": "backend/api/index.js",
+      "use": "@vercel/node",
       "config": {
-        "pythonVersion": "3.12",
-        "requirementsFile": "requirements.txt",
-        "maxLambdaSize": "250mb"
+        "nodeVersion": "18.x"
       }
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/index.py"
+      "dest": "/backend/api/index.js"
+    },
+    {
+      "src": "/uploads/(.*)",
+      "dest": "/backend/uploads/$1"
     },
     {
       "handle": "filesystem"
@@ -34,8 +38,6 @@
     }
   ],
   "env": {
-    "PYTHONUNBUFFERED": "1",
-    "PYTHONPATH": "/var/task",
-    "ENVIRONMENT": "production"
+    "NODE_ENV": "production"
   }
 }

@@ -1,1 +1,0 @@
-"""SMACOM Backend Application Package"""

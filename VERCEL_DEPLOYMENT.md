@@ -1,274 +1,183 @@
 # Vercel Deployment Guide
 
-This guide explains how to deploy your SMACOM project to Vercel.
+This document provides instructions for deploying the SMACOM application to Vercel.
 
-## Important Architecture Note
+## Project Structure
 
-Vercel is optimized for **static frontend deployments** and **Node.js backends**. Your FastAPI backend has specific requirements:
+This is a full-stack monorepo with:
+- **Frontend**: React/Vite application (root `/src`)
+- **Backend**: Node.js/Express API (`/backend`)
+- **Database**: Prisma ORM with SQLite
 
-- **Long-running connections** (MQTT broker)
-- **Background tasks** (APScheduler)
-- **Real-time features**
+## Pre-Deployment Checklist
 
-### Recommended Deployment Architecture
+### 1. Database Setup
 
-```
-┌─────────────────────────────────────┐
-│   Frontend (React + TypeScript)      │
-│   Deployed on: VERCEL                │
-└──────────────────┬──────────────────┘
-                   │
-                   ▼
-       ┌─────────────────────┐
-       │   FastAPI Backend    │
-       │   Deployed on:       │
-       │   Railway/Render/    │
-       │   Fly.io (via API)   │
-       └─────────────────────┘
-```
+⚠️ **Important**: SQLite is not recommended for production on Vercel. For a production environment, you should:
 
----
+- Use **PostgreSQL** (via Neon, Vercel Postgres, AWS RDS, or similar)
+- Use **MongoDB** (via Atlas or similar)
+- Use **MySQL** (via PlanetScale or similar)
 
-## Part 1: Frontend Deployment (Vercel)
+**Steps to migrate from SQLite to PostgreSQL:**
 
-### Step 1: Prepare the Frontend
-
-Your frontend is already configured. Verify `green-cycle-hub/`:
-- ✅ `package.json` - Dependencies declared
-- ✅ `vite.config.ts` - Build configuration
-- ✅ `.env` and `.env.example` - Environment variables
-
-### Step 2: Update Environment Variables
-
-Create `.env.production` in `green-cycle-hub/`:
-
-```env
-VITE_API_URL=https://your-backend-api-url.com
-VITE_API_TIMEOUT=30000
-```
-
-Update `green-cycle-hub/.env.example`:
-
-```env
-VITE_API_URL=http://localhost:8000
-VITE_API_TIMEOUT=30000
-```
-
-### Step 3: Update vercel.json
-
-The current `vercel.json` at the root only handles the frontend. It's correctly configured for Vercel deployment.
-
-**Current Configuration (ROOT/vercel.json):**
-```json
-{
-  "version": 2,
-  "builds": [
-    {
-      "src": "green-cycle-hub/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
-}
-```
-
-✅ This is good as-is for frontend-only deployment on Vercel.
-
-### Step 4: Deploy Frontend to Vercel
-
-1. **Install Vercel CLI:**
+1. Create a PostgreSQL database (e.g., using Vercel Postgres or Neon)
+2. Update `backend/.env` with the PostgreSQL connection string:
+   ```
+   DATABASE_URL=postgresql://user:password@host:port/dbname
+   ```
+3. Update `backend/prisma/schema.prisma`:
+   ```prisma
+   datasource db {
+     provider = "postgresql"
+     url      = env("DATABASE_URL")
+   }
+   ```
+4. Generate and apply migrations:
    ```bash
-   npm install -g vercel
+   cd backend
+   npx prisma migrate deploy
+   cd ..
    ```
 
-2. **Login to Vercel:**
-   ```bash
-   vercel login
-   ```
+### 2. Environment Variables
 
-3. **Deploy from root directory:**
-   ```bash
-   cd c:\Users\HP\Desktop\smacom
-   vercel --prod
-   ```
+Configure the following environment variables in your Vercel project settings:
 
-   **Configuration prompt:**
-   - **Project name:** `smacom`
-   - **Root directory:** `green-cycle-hub`
-   - **Build command:** `npm run build`
-   - **Output directory:** `dist`
-   - **Install command:** `npm install --legacy-peer-deps` (or `bun install` if using Bun)
+**Frontend Variables:**
+- `VITE_API_URL`: Your production API URL (e.g., `https://your-domain.com/api`)
+- `VITE_APP_ID`: Application identifier (default: `smacom`)
 
-4. **Set Environment Variables in Vercel Dashboard:**
-   - Go to Project → Settings → Environment Variables
-   - Add `VITE_API_URL` pointing to your backend API
-   - Redeploy to apply changes
+**Backend Variables:**
+- `DATABASE_URL`: Your production database connection string
+- `JWT_SECRET`: A strong, unique secret key (generate using `openssl rand -base64 32`)
+- `CLIENT_URL`: Your frontend domain (for CORS)
+- `AWS_ACCESS_KEY_ID`: AWS credentials (if using S3)
+- `AWS_SECRET_ACCESS_KEY`: AWS credentials (if using S3)
+- `AWS_REGION`: AWS region for S3
+- `AWS_BUCKET`: S3 bucket name
+- `SENDGRID_API_KEY`: SendGrid API key (for email)
+- `SENDGRID_FROM_EMAIL`: Sender email address
+- `OPENAI_API_KEY`: OpenAI API key (if used)
+- `NODE_ENV`: Set to `production`
 
-### Step 5: Configure CORS in Backend
+### 3. File Structure Setup
 
-Update your backend's CORS configuration to accept requests from your Vercel frontend:
+The following files have been configured for Vercel:
+- `vercel.json` - Deployment configuration
+- `.vercelignore` - Files to exclude from deployment
+- `vite.config.js` - Frontend build configuration
+- `.env.example` - Environment variable templates
 
-**File:** `green-cycle-hub/backend/app/core/config.py`
+## Deployment Steps
 
-Add your Vercel frontend URL:
-```python
-ALLOWED_ORIGINS = [
-    "https://your-project.vercel.app",
-    "https://www.your-domain.com",  # If using custom domain
-    "http://localhost:3000",  # Development
-    "http://localhost:5173",  # Vite dev
-]
+### Step 1: Push to GitHub
+
+```bash
+git add .
+git commit -m "Prepare for Vercel deployment"
+git push origin main
 ```
 
----
+### Step 2: Connect to Vercel
 
-## Part 2: Backend Deployment (NOT on Vercel)
+1. Go to [vercel.com](https://vercel.com) and sign in
+2. Click "Add New Project"
+3. Import your Git repository
+4. Select the project root directory
 
-**⚠️ IMPORTANT:** Your FastAPI backend is **not suitable for Vercel's serverless environment** due to:
-- WebSocket/MQTT requirements
-- Long-running background tasks (APScheduler)
-- 10-second timeout limit on Vercel Functions
+### Step 3: Configure Environment Variables
 
-### Recommended Backend Hosting Options
+In Vercel project settings:
+1. Go to Settings → Environment Variables
+2. Add all variables from the `.env.example` files
+3. Ensure variables are set for Production environment
 
-#### Option 1: Keep on Railway ✅ RECOMMENDED
-- Already configured
-- Supports Docker containers
-- No timeout issues
-- Supports MQTT/WebSockets
+### Step 4: Configure Build Settings
 
-**No changes needed for backend on Railway.**
+Vercel should auto-detect the configuration from `vercel.json`. Verify:
+- **Build Command**: `npm run build` (should be auto-detected)
+- **Output Directory**: `dist` (should be auto-detected)
 
-#### Option 2: Deploy to Render.com
-1. Push code to GitHub
-2. Create new Web Service on Render
-3. Connect GitHub repository
-4. Set Start Command: `uvicorn main:app --host 0.0.0.0 --port ${PORT}`
-5. Add environment variables
+### Step 5: Deploy
 
-#### Option 3: Deploy to Fly.io
-1. Install `flyctl`
-2. Run `flyctl launch` in backend directory
-3. Configure `fly.toml`
-4. Deploy with `flyctl deploy`
+Click "Deploy" to start the deployment process.
 
-#### Option 4: AWS Elastic Beanstalk
-1. Configure `.ebextensions`
-2. Use Elastic Beanstalk CLI
-3. Deploy with `eb deploy`
+## Post-Deployment
 
----
+### 1. Update Frontend API URL
 
-## Part 3: Communication Between Frontend & Backend
+After deployment, update the frontend environment variable:
+- `VITE_API_URL`: Should point to your Vercel domain API endpoints
 
-Once deployed:
+### 2. Test Health Check
 
-1. **Frontend** is running on: `https://your-project.vercel.app`
-2. **Backend** is running on: `https://your-backend-domain.com` (Railway/Render/Fly.io)
-
-### Update API Configuration in Frontend
-
-**File:** `green-cycle-hub/src/lib/api.ts`
-
-Ensure it uses the environment variable:
-```typescript
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-
-export const apiClient = axios.create({
-  baseURL: `${API_URL}/api/v1`,
-  timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000')
-});
+```bash
+curl https://your-domain.vercel.app/api/health
 ```
 
----
+### 3. Monitor Deployment
 
-## Step-by-Step Deployment Checklist
-
-### ✅ Frontend (Vercel)
-- [ ] Verify `green-cycle-hub/package.json` exists
-- [ ] Verify `green-cycle-hub/vite.config.ts` exists
-- [ ] Create `green-cycle-hub/.env.production`
-- [ ] Update `vercel.json` (or keep as-is if working)
-- [ ] Commit and push to GitHub
-- [ ] Deploy via Vercel CLI or GitHub integration
-- [ ] Set `VITE_API_URL` in Vercel dashboard
-- [ ] Test frontend deployment
-
-### ✅ Backend (Railway/Render/Fly.io)
-- [ ] Ensure backend API is deployed and running
-- [ ] Update `ALLOWED_ORIGINS` to include Vercel URL
-- [ ] Set environment variables in backend hosting platform
-- [ ] Test backend API is accessible from frontend
-
-### ✅ Integration
-- [ ] Test API calls from frontend to backend
-- [ ] Check browser console for CORS errors
-- [ ] Test authentication flow
-- [ ] Test MQTT connections (if applicable)
-- [ ] Monitor error logs
-
----
-
-## Environment Variables Reference
-
-### Frontend (Vercel Environment Variables)
-```
-VITE_API_URL=https://api.yourdomain.com
-VITE_API_TIMEOUT=30000
-```
-
-### Backend (Railway/Render/Fly.io Environment Variables)
-```
-ENVIRONMENT=production
-SUPABASE_URL=...
-SUPABASE_SERVICE_ROLE_KEY=...
-SUPABASE_ANON_KEY=...
-JWT_SECRET=...
-MQTT_BROKER_URL=...
-MQTT_PORT=...
-ALLOWED_ORIGINS=https://your-project.vercel.app,https://yourdomain.com
-# ... other API keys and secrets
-```
-
----
+- Check Function Logs in Vercel Dashboard
+- Monitor usage and performance metrics
+- Set up error notifications
 
 ## Troubleshooting
 
-### CORS Errors
-- Update `ALLOWED_ORIGINS` in backend config
-- Ensure backend URL is correct
-- Verify backend is running
+### Common Issues
 
-### API Not Found
-- Check `VITE_API_URL` in frontend
-- Verify backend deployment is active
-- Check backend logs for errors
+**Issue**: "Cannot find module" errors
+- Solution: Ensure `npm ci` is run in backend before deployment
 
-### Build Fails on Vercel
-- Check `vercel.json` build settings
-- Verify Node version compatibility
-- Check build output in Vercel dashboard
+**Issue**: Database connection failures
+- Solution: Verify `DATABASE_URL` is correctly set in environment variables
 
-### Frontend Can't Reach Backend
-- Ensure both are deployed and running
-- Check firewall/CORS settings
-- Verify environment variables are set correctly
+**Issue**: CORS errors on API calls
+- Solution: Verify `CLIENT_URL` matches your frontend domain in backend environment variables
 
----
+**Issue**: Frontend routes returning 404
+- Solution: The `vercel.json` SPA routing should handle this. Check your configuration.
 
-## Additional Resources
+**Issue**: File uploads not persisting
+- Solution: File uploads to local filesystem won't persist between function invocations. Use AWS S3 or Cloudinary instead.
 
+## Advanced Configuration
+
+### Custom Domain
+
+1. In Vercel Dashboard → Domains
+2. Add your custom domain
+3. Update DNS records as instructed by Vercel
+
+### Database Backups
+
+If using Vercel Postgres:
+- Automated backups are included
+- Access via Vercel Dashboard
+
+### Performance Optimization
+
+1. Enable caching headers
+2. Consider upgrading to Pro for faster function execution
+3. Use CDN caching for static assets
+
+## Migration to Production Database
+
+### From SQLite to PostgreSQL with Vercel Postgres
+
+1. Create Vercel Postgres database
+2. Copy the connection string
+3. Update `DATABASE_URL` environment variable
+4. Run migrations:
+   ```bash
+   cd backend
+   npx prisma db push
+   cd ..
+   ```
+
+## Support
+
+For additional help:
 - [Vercel Documentation](https://vercel.com/docs)
-- [FastAPI Deployment](https://fastapi.tiangolo.com/deployment/)
-- [Railway Docs](https://docs.railway.app)
-- [Render Docs](https://render.com/docs)
-- [Fly.io Docs](https://fly.io/docs)
-
+- [Prisma Documentation](https://www.prisma.io/docs/)
+- [Vite Documentation](https://vite.dev/)

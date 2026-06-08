@@ -1,0 +1,86 @@
+{
+  "name": "Product",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Product name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Product description"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "compost",
+        "liquid_fertiliser",
+        "animal_feed",
+        "biochar",
+        "compost_tea",
+        "worm_castings",
+        "eco_packaging",
+        "eco_mart"
+      ],
+      "description": "Product category"
+    },
+    "price": {
+      "type": "number",
+      "description": "Price per unit"
+    },
+    "unit": {
+      "type": "string",
+      "enum": [
+        "kg",
+        "litre",
+        "bag",
+        "piece",
+        "ton"
+      ],
+      "description": "Unit of measurement"
+    },
+    "stock_quantity": {
+      "type": "number",
+      "description": "Available stock"
+    },
+    "image_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Product images"
+    },
+    "seller_id": {
+      "type": "string",
+      "description": "Seller user ID"
+    },
+    "seller_name": {
+      "type": "string",
+      "description": "Seller display name"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "rating": {
+      "type": "number",
+      "description": "Average rating"
+    },
+    "total_reviews": {
+      "type": "number",
+      "default": 0
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "category",
+    "price",
+    "unit"
+  ]
+}

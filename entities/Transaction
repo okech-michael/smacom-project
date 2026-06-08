@@ -1,0 +1,69 @@
+{
+  "name": "Transaction",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "disposal_fee",
+        "marketplace_purchase",
+        "marketplace_sale",
+        "subscription",
+        "lms_purchase",
+        "credit_redemption",
+        "payout",
+        "commission"
+      ]
+    },
+    "amount": {
+      "type": "number"
+    },
+    "currency": {
+      "type": "string",
+      "default": "KES"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "failed",
+        "refunded"
+      ],
+      "default": "pending"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "mpesa",
+        "card",
+        "bank_transfer",
+        "credits",
+        "system"
+      ]
+    },
+    "reference_id": {
+      "type": "string"
+    },
+    "reference_type": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "commission_amount": {
+      "type": "number"
+    },
+    "net_amount": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "user_id",
+    "type",
+    "amount"
+  ]
+}

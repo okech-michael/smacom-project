@@ -1,0 +1,61 @@
+{
+  "name": "Inventory",
+  "type": "object",
+  "properties": {
+    "processor_id": {
+      "type": "string"
+    },
+    "item_type": {
+      "type": "string",
+      "enum": [
+        "raw_waste",
+        "compost",
+        "animal_feed",
+        "biochar",
+        "liquid_fertiliser",
+        "compost_tea",
+        "worm_castings"
+      ]
+    },
+    "quantity_kg": {
+      "type": "number"
+    },
+    "batch_number": {
+      "type": "string"
+    },
+    "production_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "in_production",
+        "ready",
+        "listed",
+        "sold"
+      ],
+      "default": "in_production"
+    },
+    "quality_grade": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "processor_id",
+    "item_type",
+    "quantity_kg"
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "name": "WasteReport",
+  "type": "object",
+  "properties": {
+    "waste_type": {
+      "type": "string",
+      "enum": [
+        "organic",
+        "plastic",
+        "metal",
+        "paper",
+        "glass",
+        "electronic",
+        "textile",
+        "hazardous",
+        "mixed"
+      ],
+      "description": "Type of waste"
+    },
+    "waste_nature": {
+      "type": "string",
+      "enum": [
+        "household",
+        "commercial",
+        "industrial",
+        "agricultural",
+        "institutional"
+      ],
+      "description": "Nature/source of waste"
+    },
+    "quantity_kg": {
+      "type": "number",
+      "description": "Quantity in kilograms"
+    },
+    "photo_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Photos of the waste"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "GPS latitude"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "GPS longitude"
+    },
+    "address": {
+      "type": "string",
+      "description": "Pickup address"
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Scheduled collection date"
+    },
+    "scheduled_time": {
+      "type": "string",
+      "description": "Preferred pickup time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending_pickup",
+        "processor_assigned",
+        "en_route",
+        "collected",
+        "processing",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending_pickup"
+    },
+    "assigned_processor_id": {
+      "type": "string",
+      "description": "ID of assigned bio processor"
+    },
+    "disposal_fee": {
+      "type": "number",
+      "description": "Fee charged for disposal"
+    },
+    "credits_earned": {
+      "type": "number",
+      "description": "Credits earned by producer"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    },
+    "quality_rating": {
+      "type": "number",
+      "description": "Quality rating 1-5"
+    }
+  },
+  "required": [
+    "waste_type",
+    "waste_nature",
+    "quantity_kg",
+    "address"
+  ]
+}
