@@ -1,0 +1,47 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "waste_pickup",
+        "order_update",
+        "payment",
+        "system",
+        "alert",
+        "course",
+        "subscription",
+        "iot_alert"
+      ]
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    },
+    "action_url": {
+      "type": "string"
+    },
+    "reference_id": {
+      "type": "string"
+    },
+    "reference_type": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "title",
+    "message",
+    "type"
+  ]
+}

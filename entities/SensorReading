@@ -1,0 +1,52 @@
+{
+  "name": "SensorReading",
+  "type": "object",
+  "properties": {
+    "device_id": {
+      "type": "string"
+    },
+    "sensor_type": {
+      "type": "string",
+      "enum": [
+        "temperature",
+        "moisture",
+        "co2",
+        "fill_level"
+      ]
+    },
+    "value": {
+      "type": "number"
+    },
+    "unit": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "is_alert": {
+      "type": "boolean",
+      "default": false
+    },
+    "alert_type": {
+      "type": "string",
+      "enum": [
+        "temperature_high",
+        "temperature_low",
+        "moisture_high",
+        "moisture_low",
+        "bin_full",
+        "compost_ready",
+        "biogas_ready",
+        "co2_high"
+      ]
+    },
+    "alert_message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "device_id",
+    "sensor_type",
+    "value"
+  ]
+}

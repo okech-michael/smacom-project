@@ -1,0 +1,77 @@
+{
+  "name": "Course",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "waste_management",
+        "composting",
+        "biogas",
+        "recycling",
+        "organic_farming",
+        "sustainability",
+        "circular_economy",
+        "environmental_science"
+      ]
+    },
+    "instructor_name": {
+      "type": "string"
+    },
+    "instructor_id": {
+      "type": "string"
+    },
+    "thumbnail_url": {
+      "type": "string"
+    },
+    "price": {
+      "type": "number"
+    },
+    "is_free": {
+      "type": "boolean",
+      "default": false
+    },
+    "duration_hours": {
+      "type": "number"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ]
+    },
+    "total_lessons": {
+      "type": "number",
+      "default": 0
+    },
+    "total_enrollments": {
+      "type": "number",
+      "default": 0
+    },
+    "rating": {
+      "type": "number"
+    },
+    "is_published": {
+      "type": "boolean",
+      "default": false
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "title",
+    "category"
+  ]
+}

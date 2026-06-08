@@ -1,0 +1,64 @@
+{
+  "name": "IoTDevice",
+  "type": "object",
+  "properties": {
+    "device_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "temperature",
+        "moisture",
+        "co2",
+        "fill_level",
+        "multi_sensor"
+      ]
+    },
+    "location": {
+      "type": "string"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "owner_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "online",
+        "offline",
+        "maintenance",
+        "error"
+      ],
+      "default": "offline"
+    },
+    "last_reading": {
+      "type": "number"
+    },
+    "last_reading_unit": {
+      "type": "string"
+    },
+    "last_reading_time": {
+      "type": "string"
+    },
+    "battery_level": {
+      "type": "number"
+    },
+    "firmware_version": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "device_id",
+    "name",
+    "type"
+  ]
+}

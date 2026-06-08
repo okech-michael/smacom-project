@@ -1,0 +1,27 @@
+{
+  "name": "CreditWallet",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "balance": {
+      "type": "number",
+      "default": 0
+    },
+    "total_earned": {
+      "type": "number",
+      "default": 0
+    },
+    "total_redeemed": {
+      "type": "number",
+      "default": 0
+    },
+    "last_transaction_date": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id"
+  ]
+}

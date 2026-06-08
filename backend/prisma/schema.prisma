@@ -1,0 +1,280 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  full_name     String
+  email         String    @unique
+  password_hash String
+  role          String    @default("learner")
+  is_verified   Boolean   @default(false)
+  otp_code      String?
+  otp_expires   DateTime?
+  created_date  DateTime  @default(now())
+  updated_date  DateTime  @updatedAt
+
+  wasteReports    WasteReport[]
+  orders          Order[]
+  enrollments     Enrollment[]
+  wallet          CreditWallet?
+  subscriptions   Subscription[]
+  notifications   Notification[]
+  transactions    Transaction[]
+  iotDevices      IoTDevice[]
+  products        Product[]
+}
+
+model WasteReport {
+  id                   String   @id @default(uuid())
+  user_id              String
+  waste_type           String
+  waste_nature         String
+  quantity_kg          Float
+  photo_urls           String
+  latitude             Float?
+  longitude            Float?
+  address              String
+  scheduled_date       DateTime?
+  scheduled_time       String?
+  status               String   @default("pending_pickup")
+  assigned_processor_id String?
+  disposal_fee         Float?
+  credits_earned       Float?
+  notes                String?
+  quality_rating       Int?
+  created_date         DateTime @default(now())
+  updated_date         DateTime @updatedAt
+
+  user                 User     @relation(fields: [user_id], references: [id])
+}
+
+model Product {
+  id             String   @id @default(uuid())
+  name           String
+  description    String?
+  category       String
+  price          Float
+  unit           String
+  stock_quantity Float    @default(0)
+  image_urls     String
+  seller_id      String
+  seller_name    String?
+  is_active      Boolean  @default(true)
+  rating         Float?
+  total_reviews  Int      @default(0)
+  tags           String
+  created_date   DateTime @default(now())
+  updated_date   DateTime @updatedAt
+
+  seller         User     @relation(fields: [seller_id], references: [id])
+  orderItems     OrderItem[]
+}
+
+model Order {
+  id               String      @id @default(uuid())
+  order_number     String      @unique
+  buyer_id         String
+  buyer_name       String?
+  seller_id        String?
+  seller_name      String?
+  subtotal         Float
+  delivery_fee     Float       @default(0)
+  commission       Float       @default(0)
+  total_amount     Float
+  status           String      @default("pending")
+  delivery_address String?
+  payment_method   String?
+  payment_status   String      @default("pending")
+  tracking_number  String?
+  notes            String?
+  created_date     DateTime    @default(now())
+  updated_date     DateTime    @updatedAt
+
+  buyer            User        @relation(fields: [buyer_id], references: [id])
+  items            OrderItem[]
+}
+
+model OrderItem {
+  id           String  @id @default(uuid())
+  order_id     String
+  product_id   String
+  product_name String
+  quantity     Float
+  unit_price   Float
+  total        Float
+
+  order        Order   @relation(fields: [order_id], references: [id])
+  product      Product @relation(fields: [product_id], references: [id])
+}
+
+model Course {
+  id                String       @id @default(uuid())
+  title             String
+  description       String?
+  category          String
+  instructor_name   String?
+  instructor_id     String?
+  thumbnail_url     String?
+  price             Float        @default(0)
+  is_free           Boolean      @default(false)
+  duration_hours    Float?
+  difficulty        String?
+  total_lessons     Int          @default(0)
+  total_enrollments Int          @default(0)
+  rating            Float?
+  is_published      Boolean      @default(false)
+  tags              String
+  created_date      DateTime     @default(now())
+  updated_date      DateTime     @updatedAt
+
+  lessons           Lesson[]
+  enrollments       Enrollment[]
+}
+
+model Lesson {
+  id               String   @id @default(uuid())
+  course_id        String
+  title            String
+  description      String?
+  content          String?
+  youtube_url      String?
+  order_index      Int      @default(0)
+  duration_minutes Float?
+  module_name      String?
+  is_free_preview  Boolean  @default(false)
+  created_date     DateTime @default(now())
+
+  course           Course   @relation(fields: [course_id], references: [id])
+}
+
+model Enrollment {
+  id                 String   @id @default(uuid())
+  course_id          String
+  user_id            String
+  progress_percent   Float    @default(0)
+  completed_lessons  String
+  status             String   @default("active")
+  certificate_issued Boolean  @default(false)
+  certificate_url    String?
+  created_date       DateTime @default(now())
+  updated_date       DateTime @updatedAt
+
+  course             Course   @relation(fields: [course_id], references: [id])
+  user               User     @relation(fields: [user_id], references: [id])
+}
+
+model CreditWallet {
+  id                   String    @id @default(uuid())
+  user_id              String    @unique
+  balance              Float     @default(0)
+  total_earned         Float     @default(0)
+  total_redeemed       Float     @default(0)
+  last_transaction_date DateTime?
+  updated_date         DateTime  @updatedAt
+
+  user                 User      @relation(fields: [user_id], references: [id])
+}
+
+model Transaction {
+  id               String   @id @default(uuid())
+  user_id          String
+  type             String
+  amount           Float
+  currency         String   @default("KES")
+  status           String   @default("pending")
+  payment_method   String?
+  reference_id     String?
+  reference_type   String?
+  description      String?
+  commission_amount Float?
+  net_amount       Float?
+  created_date     DateTime @default(now())
+
+  user             User     @relation(fields: [user_id], references: [id])
+}
+
+model Subscription {
+  id          String   @id @default(uuid())
+  user_id     String
+  plan        String   @default("free")
+  status      String   @default("active")
+  start_date  DateTime?
+  end_date    DateTime?
+  auto_renew  Boolean  @default(true)
+  features    String
+  price       Float?
+  created_date DateTime @default(now())
+
+  user        User     @relation(fields: [user_id], references: [id])
+}
+
+model IoTDevice {
+  id                  String         @id @default(uuid())
+  device_id           String         @unique
+  name                String
+  type                String
+  location            String?
+  latitude            Float?
+  longitude           Float?
+  owner_id            String
+  status              String         @default("offline")
+  last_reading        Float?
+  last_reading_unit   String?
+  last_reading_time   DateTime?
+  battery_level       Float?
+  firmware_version    String?
+  created_date        DateTime       @default(now())
+
+  owner               User           @relation(fields: [owner_id], references: [id])
+  readings            SensorReading[]
+}
+
+model SensorReading {
+  id            String   @id @default(uuid())
+  device_id     String
+  sensor_type   String
+  value         Float
+  unit          String?
+  timestamp     DateTime @default(now())
+  is_alert      Boolean  @default(false)
+  alert_type    String?
+  alert_message String?
+
+  device        IoTDevice @relation(fields: [device_id], references: [id])
+}
+
+model Inventory {
+  id              String   @id @default(uuid())
+  processor_id    String
+  item_type       String
+  quantity_kg     Float
+  batch_number    String?
+  production_date DateTime?
+  expiry_date     DateTime?
+  status          String   @default("in_production")
+  quality_grade   String?
+  notes           String?
+  created_date    DateTime @default(now())
+  updated_date    DateTime @updatedAt
+}
+
+model Notification {
+  id             String   @id @default(uuid())
+  user_id        String
+  title          String
+  message        String
+  type           String
+  is_read        Boolean  @default(false)
+  action_url     String?
+  reference_id   String?
+  reference_type String?
+  created_date   DateTime @default(now())
+
+  user           User     @relation(fields: [user_id], references: [id])
+}
