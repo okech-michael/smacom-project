@@ -19,6 +19,15 @@ export default function Register() {
   const [showOtp, setShowOtp] = useState(false);
   const [otpCode, setOtpCode] = useState("");
 
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedEmail = window.localStorage.getItem("pendingOtpEmail");
+      if (storedEmail) {
+        setEmail(storedEmail);
+      }
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -29,6 +38,9 @@ export default function Register() {
     setLoading(true);
     try {
       await apiClient.auth.register({ email, password });
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("pendingOtpEmail", email);
+      }
       setShowOtp(true);
     } catch (err) {
       setError(err.message || "Registration failed");
@@ -41,9 +53,13 @@ export default function Register() {
     setError("");
     setLoading(true);
     try {
-      const result = await apiClient.auth.verifyOtp({ email, otp_code: otpCode });
+      const emailToVerify = email || (typeof window !== "undefined" ? window.localStorage.getItem("pendingOtpEmail") : null);
+      const result = await apiClient.auth.verifyOtp({ email: emailToVerify, otp_code: otpCode });
       if (result?.access_token) {
         apiClient.auth.setToken(result.access_token);
+      }
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem("pendingOtpEmail");
       }
       window.location.href = "/";
     } catch (err) {
