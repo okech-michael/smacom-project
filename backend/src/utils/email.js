@@ -29,14 +29,20 @@ const transporter = sendgridApiKey
 export const sendEmail = async ({ to, subject, text, html }) => {
   if (!transporter) {
     console.warn('Email transporter not configured. Skipping email:', { to, subject });
-    return;
+    return false;
   }
 
-  await transporter.sendMail({
-    from: process.env.EMAIL_FROM || 'no-reply@smacom.local',
-    to,
-    subject,
-    text,
-    html,
-  });
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM || 'no-reply@smacom.local',
+      to,
+      subject,
+      text,
+      html,
+    });
+    return true;
+  } catch (error) {
+    console.error('Email send failed:', error?.message || error);
+    return false;
+  }
 };

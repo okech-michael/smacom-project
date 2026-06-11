@@ -34,6 +34,19 @@ const s3Client = useS3
 const useLocalStorage = !useS3 && !useCloudinary;
 const localUploadDir = path.resolve(process.cwd(), 'uploads');
 
+const getLocalUploadUrl = (filename) => {
+  const baseUrl = String(process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
+  return `${baseUrl}/uploads/${filename}`;
+};
+
+const saveFileLocally = async (file) => {
+  await fs.mkdir(localUploadDir, { recursive: true });
+  const filename = `${Date.now()}-${file.originalname}`;
+  const filePath = path.join(localUploadDir, filename);
+  await fs.writeFile(filePath, file.buffer);
+  return getLocalUploadUrl(filename);
+};
+
 export const uploadOptions = {
   storage: undefined,
 };
@@ -63,8 +76,16 @@ export const uploadFile = async (file) => {
           folder: 'smacom',
           resource_type: 'auto',
         },
-        (error, result) => {
-          if (error) return reject(error);
+        async (error, result) => {
+          if (error) {
+            console.error('Cloudinary upload failed:', error?.message || error);
+            try {
+              const url = await saveFileLocally(file);
+              return resolve(url);
+            } catch (localError) {
+              return reject(localError);
+            }
+          }
           resolve(result.secure_url);
         }
       );
