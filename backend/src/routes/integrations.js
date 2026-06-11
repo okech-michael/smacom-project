@@ -11,11 +11,11 @@ const openaiKey = process.env.OPENAI_API_KEY;
 const openai = openaiKey ? new OpenAI({ apiKey: openaiKey }) : null;
 
 const createChatCompletion = async (client, payload) => {
+  if (client?.chat?.completions?.create) {
+    return client.chat.completions.create(payload);
+  }
   if (typeof client.createChatCompletion === 'function') {
     return client.createChatCompletion(payload);
-  }
-  if (client.chat?.completions?.create) {
-    return client.chat.completions.create(payload);
   }
   if (client.responses?.create) {
     return client.responses.create({ model: payload.model, input: payload.messages.map((msg) => `${msg.role}: ${msg.content}`).join('\n') });
