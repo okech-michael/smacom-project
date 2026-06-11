@@ -11,7 +11,9 @@ const smtpUser = process.env.EMAIL_USER;
 const smtpPassword = process.env.EMAIL_PASSWORD;
 
 const transporter = sendgridApiKey
-  ? nodemailer.createTransport(nodemailerSendgrid({ apiKey: sendgridApiKey }))
+  ? nodemailer.createTransport(
+      nodemailerSendgrid({ auth: { api_key: sendgridApiKey } })
+    )
   : smtpHost && smtpPort && smtpUser && smtpPassword
   ? nodemailer.createTransport({
       host: smtpHost,
