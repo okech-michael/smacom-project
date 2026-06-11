@@ -55,7 +55,12 @@ const auth = {
   },
 
   async verifyOtp(payload) {
-    const body = typeof payload === 'object' ? payload : { email: payload, otp_code: arguments[1] };
+    const body = typeof payload === 'object'
+      ? {
+          ...payload,
+          otp_code: payload.otp_code ?? payload.otpCode,
+        }
+      : { email: payload, otp_code: arguments[1] };
     const result = await api.post('/auth/verify-otp', body);
     if (result?.access_token) {
       this.setToken(result.access_token);

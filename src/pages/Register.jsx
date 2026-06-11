@@ -41,7 +41,7 @@ export default function Register() {
     setError("");
     setLoading(true);
     try {
-      const result = await apiClient.auth.verifyOtp({ email, otpCode });
+      const result = await apiClient.auth.verifyOtp({ email, otp_code: otpCode });
       if (result?.access_token) {
         apiClient.auth.setToken(result.access_token);
       }
