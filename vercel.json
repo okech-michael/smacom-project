@@ -1,13 +1,11 @@
 {
-  "version": 2,
+  "version": 3,
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "dist",
   "builds": [
     {
       "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist",
-        "cleanUrls": true
-      }
+      "use": "@vercel/static-build"
     },
     {
       "src": "backend/api/index.js",
@@ -20,11 +18,11 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/backend/api/index.js"
+      "dest": "backend/api/index.js"
     },
     {
       "src": "/uploads/(.*)",
-      "dest": "/backend/uploads/$1"
+      "dest": "backend/uploads/$1"
     },
     {
       "handle": "filesystem"
