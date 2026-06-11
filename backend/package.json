@@ -9,7 +9,7 @@
     "smoke-test": "node scripts/smoke-test.js",
     "prisma": "prisma",
     "postinstall": "prisma generate",
-    "vercel-build": "prisma generate && prisma db push --skip-generate --skip-validate"
+    "vercel-build": "prisma generate"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.0.0",
