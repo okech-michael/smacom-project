@@ -16,12 +16,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
 
-app.use('/api/auth', authRouter);
-app.use('/api/entities', entitiesRouter);
-app.use('/api/integrations', integrationsRouter);
-app.use('/api/apps', appsRouter);
+app.use(['/api/auth', '/api/v1/auth'], authRouter);
+app.use(['/api/entities', '/api/v1/entities'], entitiesRouter);
+app.use(['/api/integrations', '/api/v1/integrations'], integrationsRouter);
+app.use(['/api/apps', '/api/v1/apps'], appsRouter);
 
-app.get('/api/health', (req, res) => {
+app.get(['/api/health', '/api/v1/health'], (req, res) => {
   res.json({ status: 'ok', message: 'SMACom backend is running' });
 });
 

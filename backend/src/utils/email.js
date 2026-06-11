@@ -10,12 +10,20 @@ const smtpPort = process.env.EMAIL_PORT;
 const smtpUser = process.env.EMAIL_USER;
 const smtpPassword = process.env.EMAIL_PASSWORD;
 
-const transporter = sendgridApiKey
-  ? nodemailer.createTransport(
-      nodemailerSendgrid({ auth: { api_key: sendgridApiKey } })
-    )
-  : smtpHost && smtpPort && smtpUser && smtpPassword
-  ? nodemailer.createTransport({
+const createSendGridTransport = (apiKey) => {
+  if (!apiKey) return null;
+  try {
+    return nodemailer.createTransport(nodemailerSendgrid({ auth: { api_key: apiKey } }));
+  } catch (error) {
+    console.error('SendGrid transport initialization failed:', error?.message || error);
+    return null;
+  }
+};
+
+const createSmtpTransport = () => {
+  if (!smtpHost || !smtpPort || !smtpUser || !smtpPassword) return null;
+  try {
+    return nodemailer.createTransport({
       host: smtpHost,
       port: Number(smtpPort),
       secure: Number(smtpPort) === 465,
@@ -23,10 +31,27 @@ const transporter = sendgridApiKey
         user: smtpUser,
         pass: smtpPassword,
       },
-    })
-  : null;
+    });
+  } catch (error) {
+    console.error('SMTP transport initialization failed:', error?.message || error);
+    return null;
+  }
+};
+
+const getEmailTransporter = () => {
+  if (sendgridApiKey) {
+    const transport = createSendGridTransport(sendgridApiKey);
+    if (transport) return transport;
+  }
+
+  const smtpTransport = createSmtpTransport();
+  if (smtpTransport) return smtpTransport;
+
+  return null;
+};
 
 export const sendEmail = async ({ to, subject, text, html }) => {
+  const transporter = getEmailTransporter();
   if (!transporter) {
     console.warn('Email transporter not configured. Skipping email:', { to, subject });
     return false;
