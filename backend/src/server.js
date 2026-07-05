@@ -5,6 +5,14 @@ import app from './app.js';
 
 dotenv.config();
 
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+
 const PORT = process.env.PORT || 4000;
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
