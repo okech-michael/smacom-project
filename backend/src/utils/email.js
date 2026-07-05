@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
-import nodemailerSendgrid from 'nodemailer-sendgrid-transport';
 
 dotenv.config();
 
@@ -13,7 +12,15 @@ const smtpPassword = process.env.EMAIL_PASSWORD;
 const createSendGridTransport = (apiKey) => {
   if (!apiKey) return null;
   try {
-    return nodemailer.createTransport(nodemailerSendgrid({ auth: { api_key: apiKey } }));
+    return nodemailer.createTransport({
+      host: 'smtp.sendgrid.net',
+      port: 587,
+      secure: false,
+      auth: {
+        user: 'apikey',
+        pass: apiKey,
+      },
+    });
   } catch (error) {
     console.error('SendGrid transport initialization failed:', error?.message || error);
     return null;
