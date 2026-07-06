@@ -6,6 +6,14 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import RoleProtectedRoute from '@/components/RoleProtectedRoute';
+import PublicLayout from '@/components/layout/PublicLayout';
+import HomePage from '@/pages/public/HomePage';
+import AboutPage from '@/pages/public/AboutPage';
+import SolutionsPage from '@/pages/public/SolutionsPage';
+import ImpactPage from '@/pages/public/ImpactPage';
+import LearningPage from '@/pages/public/LearningPage';
+import ContactPage from '@/pages/public/ContactPage';
 
 // Auth pages
 import Login from '@/pages/Login';
@@ -70,6 +78,15 @@ const AuthenticatedApp = () => {
 
   return (
     <Routes>
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/solutions" element={<SolutionsPage />} />
+        <Route path="/impact" element={<ImpactPage />} />
+        <Route path="/learning" element={<LearningPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+      </Route>
+
       {/* Auth routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
@@ -80,46 +97,50 @@ const AuthenticatedApp = () => {
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route path="/onboarding" element={<Onboarding />} />
         <Route element={<AppLayout />}>
-          <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
 
-          {/* Waste Producer */}
-          <Route path="/waste/report" element={<ReportWaste />} />
-          <Route path="/waste/pickups" element={<MyPickups />} />
-          <Route path="/wallet" element={<Wallet />} />
+          <Route element={<RoleProtectedRoute allowedRoles={['waste_producer']} redirectTo="/dashboard" />}>
+            <Route path="/waste/report" element={<ReportWaste />} />
+            <Route path="/waste/pickups" element={<MyPickups />} />
+            <Route path="/wallet" element={<Wallet />} />
+          </Route>
 
-          {/* Marketplace */}
-          <Route path="/marketplace" element={<Marketplace />} />
-          <Route path="/marketplace/product/:id" element={<ProductDetail />} />
-          <Route path="/orders" element={<Orders />} />
+          <Route element={<RoleProtectedRoute allowedRoles={['farmer', 'waste_producer']} redirectTo="/dashboard" />}>
+            <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/marketplace/product/:id" element={<ProductDetail />} />
+            <Route path="/orders" element={<Orders />} />
+          </Route>
 
-          {/* LMS */}
-          <Route path="/learning" element={<CourseCatalog />} />
-          <Route path="/learning/course/:id" element={<CourseDetail />} />
-          <Route path="/learning/my-courses" element={<MyCourses />} />
-          <Route path="/learning/certificates" element={<Certificates />} />
+          <Route element={<RoleProtectedRoute allowedRoles={['learner', 'farmer', 'waste_producer', 'bio_processor', 'admin']} redirectTo="/dashboard" />}>
+            <Route path="/learning/catalog" element={<CourseCatalog />} />
+            <Route path="/learning/course/:id" element={<CourseDetail />} />
+            <Route path="/learning/my-courses" element={<MyCourses />} />
+            <Route path="/learning/certificates" element={<Certificates />} />
+          </Route>
 
-          {/* Bio Processor */}
-          <Route path="/processor/pickups" element={<PickupRequests />} />
-          <Route path="/processor/inventory" element={<InventoryPage />} />
-          <Route path="/processor/products" element={<ProcessorProducts />} />
-          <Route path="/processor/earnings" element={<Earnings />} />
+          <Route element={<RoleProtectedRoute allowedRoles={['bio_processor']} redirectTo="/dashboard" />}>
+            <Route path="/processor/pickups" element={<PickupRequests />} />
+            <Route path="/processor/inventory" element={<InventoryPage />} />
+            <Route path="/processor/products" element={<ProcessorProducts />} />
+            <Route path="/processor/earnings" element={<Earnings />} />
+          </Route>
 
-          {/* AI & IoT */}
-          <Route path="/ai-advisor" element={<AIAdvisor />} />
-          <Route path="/iot" element={<IoTDashboard />} />
+          <Route element={<RoleProtectedRoute allowedRoles={['waste_producer', 'bio_processor', 'farmer', 'learner', 'admin']} redirectTo="/dashboard" />}>
+            <Route path="/ai-advisor" element={<AIAdvisor />} />
+            <Route path="/iot" element={<IoTDashboard />} />
+          </Route>
 
-          {/* Admin */}
-          <Route path="/admin/users" element={<UserManagement />} />
-          <Route path="/admin/waste" element={<AdminWaste />} />
-          <Route path="/admin/marketplace" element={<AdminMarketplace />} />
-          <Route path="/admin/courses" element={<AdminCourses />} />
-          <Route path="/admin/iot" element={<IoTDashboard />} />
-          <Route path="/admin/finances" element={<AdminFinances />} />
-          <Route path="/admin/environment" element={<AdminEnvironment />} />
-          <Route path="/admin/analytics" element={<AdminAnalytics />} />
+          <Route element={<RoleProtectedRoute allowedRoles={['admin']} redirectTo="/dashboard" />}>
+            <Route path="/admin/users" element={<UserManagement />} />
+            <Route path="/admin/waste" element={<AdminWaste />} />
+            <Route path="/admin/marketplace" element={<AdminMarketplace />} />
+            <Route path="/admin/courses" element={<AdminCourses />} />
+            <Route path="/admin/iot" element={<IoTDashboard />} />
+            <Route path="/admin/finances" element={<AdminFinances />} />
+            <Route path="/admin/environment" element={<AdminEnvironment />} />
+            <Route path="/admin/analytics" element={<AdminAnalytics />} />
+          </Route>
 
-          {/* Common */}
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
         </Route>

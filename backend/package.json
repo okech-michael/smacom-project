@@ -12,7 +12,7 @@
     "vercel-build": "node -e \"process.env.PRISMA_HIDE_UPDATE_MESSAGE='1'; require('child_process').spawnSync('npx', ['prisma','generate'], { stdio: 'inherit', shell: true })\""
   },
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.0.0",
