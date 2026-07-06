@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { Linkedin, Twitter, Facebook, Youtube, Mail } from "lucide-react";
 
 const COLS = [
@@ -41,6 +42,8 @@ const COLS = [
 ] as const;
 
 export function SiteFooter() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   return (
     <footer className="bg-white border-t border-slate-100 pt-20 pb-10">
       <div className="max-w-7xl mx-auto px-6">
@@ -57,21 +60,47 @@ export function SiteFooter() {
               management, circular technology, and empowered agriculture.
             </p>
             <form
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!email) return;
+                setStatus('sending');
+                try {
+                  const res = await fetch('/api/newsletter', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email }),
+                  });
+                  if (res.ok) {
+                    setStatus('success');
+                    setEmail('');
+                  } else {
+                    setStatus('error');
+                  }
+                } catch (err) {
+                  setStatus('error');
+                }
+              }}
               className="mt-6 flex max-w-xs items-center rounded-full border border-slate-200 bg-slate-50 pr-1"
             >
               <input
+                name="email"
                 type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Newsletter email"
                 className="flex-1 bg-transparent px-4 py-2.5 text-sm outline-none placeholder:text-slate-400"
               />
               <button
                 type="submit"
                 aria-label="Subscribe"
-                className="grid size-9 place-items-center rounded-full bg-forest text-white hover:bg-forest-deep transition-colors"
+                className="w-9 h-9 grid place-items-center rounded-full bg-forest text-white hover:bg-forest-deep transition-colors"
               >
-                <Mail size={15} />
+                {status === 'sending' ? (
+                  <span className="text-xs">...</span>
+                ) : (
+                  <Mail size={15} />
+                )}
               </button>
             </form>
           </div>
@@ -101,29 +130,53 @@ export function SiteFooter() {
             reserved.
           </p>
           <div className="flex gap-4 text-slate-400">
-            <a href="#" aria-label="LinkedIn" className="hover:text-forest">
+            <a
+              href="https://www.linkedin.com"
+              aria-label="LinkedIn"
+              className="hover:text-forest"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Linkedin size={18} />
             </a>
-            <a href="#" aria-label="Twitter" className="hover:text-forest">
+            <a
+              href="https://twitter.com"
+              aria-label="Twitter"
+              className="hover:text-forest"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Twitter size={18} />
             </a>
-            <a href="#" aria-label="Facebook" className="hover:text-forest">
+            <a
+              href="https://facebook.com"
+              aria-label="Facebook"
+              className="hover:text-forest"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Facebook size={18} />
             </a>
-            <a href="#" aria-label="Youtube" className="hover:text-forest">
+            <a
+              href="https://www.youtube.com"
+              aria-label="Youtube"
+              className="hover:text-forest"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Youtube size={18} />
             </a>
           </div>
           <div className="flex gap-6 text-sm text-slate-400">
-            <a href="#" className="hover:text-forest">
+            <Link to="/privacy" className="hover:text-forest">
               Privacy
-            </a>
-            <a href="#" className="hover:text-forest">
+            </Link>
+            <Link to="/terms" className="hover:text-forest">
               Terms
-            </a>
-            <a href="#" className="hover:text-forest">
+            </Link>
+            <Link to="/cookies" className="hover:text-forest">
               Cookies
-            </a>
+            </Link>
           </div>
         </div>
       </div>
