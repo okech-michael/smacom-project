@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import { Leaf, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import logo from '@/assets/ml.jpg';
 import { useAuth } from '@/lib/AuthContext';
 
 const links = [
@@ -19,8 +20,8 @@ export default function PublicLayout() {
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
           <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Leaf className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary overflow-hidden">
+              <img src={logo} alt="SMACOM logo" className="h-8 w-8 object-cover rounded-full" />
             </div>
             <div>
               <p className="text-sm font-semibold tracking-[0.2em] text-primary uppercase">SMACOM</p>
