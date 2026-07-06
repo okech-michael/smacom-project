@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "nodemon --watch src --ignore uploads src/server.js",
     "start": "node src/server.js",
