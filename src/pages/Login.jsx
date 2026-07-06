@@ -20,7 +20,7 @@ export default function Login() {
     setLoading(true);
     try {
       await apiClient.auth.loginViaEmailPassword(email, password);
-      window.location.href = "/";
+      window.location.assign('/dashboard');
     } catch (err) {
       setError(err.message || "Invalid email or password");
     } finally {

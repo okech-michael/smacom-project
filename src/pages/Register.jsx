@@ -9,6 +9,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { toast } from "@/components/ui/use-toast";
+import RoleSelector from "@/components/public/RoleSelector";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -18,6 +19,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [otpCode, setOtpCode] = useState("");
+  const [selectedRole, setSelectedRole] = useState("learner");
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -39,6 +41,9 @@ export default function Register() {
     try {
       await apiClient.auth.register({ email, password });
       if (typeof window !== "undefined") {
+        window.localStorage.setItem("pendingRole", selectedRole);
+      }
+      if (typeof window !== "undefined") {
         window.localStorage.setItem("pendingOtpEmail", email);
       }
       setShowOtp(true);
@@ -59,9 +64,14 @@ export default function Register() {
         apiClient.auth.setToken(result.access_token);
       }
       if (typeof window !== "undefined") {
+        const pendingRole = window.localStorage.getItem("pendingRole");
         window.localStorage.removeItem("pendingOtpEmail");
+        window.localStorage.removeItem("pendingRole");
+        if (pendingRole) {
+          await apiClient.auth.updateMe({ role: pendingRole });
+        }
       }
-      window.location.href = "/";
+      window.location.assign('/dashboard');
     } catch (err) {
       setError(err.message || "Invalid verification code");
     } finally {
@@ -179,6 +189,7 @@ export default function Register() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <RoleSelector selectedRole={selectedRole} onSelect={setSelectedRole} title="Choose your role" description="Select the role that best matches how you’ll use the platform." />
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <div className="relative">
