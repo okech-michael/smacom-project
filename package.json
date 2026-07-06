@@ -6,11 +6,14 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run vercel-build",
-    "vercel-build": "vite build && cd backend && npm ci && cd ..",
+    "vercel-build": "vite build && npm --prefix backend ci",
     "lint": "eslint . --quiet",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc -p ./jsconfig.json",
     "preview": "vite preview"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^17.0.0",

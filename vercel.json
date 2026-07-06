@@ -13,7 +13,7 @@
       "src": "backend/api/index.js",
       "use": "@vercel/node",
       "config": {
-        "nodeVersion": "24.x"
+        "runtime": "nodejs20.x"
       }
     }
   ],
@@ -25,9 +25,6 @@
     {
       "src": "/uploads/(.*)",
       "dest": "/backend/uploads/$1"
-    },
-    {
-      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
