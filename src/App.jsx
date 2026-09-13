@@ -54,18 +54,7 @@ import AdminMarketplace from '@/pages/admin/AdminMarketplace';
 import AdminCourses from '@/pages/admin/AdminCourses';
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
-
-  if (isLoadingPublicSettings || isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-4 border-muted border-t-primary rounded-full animate-spin" />
-          <p className="text-sm text-muted-foreground">Loading SMACOM Solutions...</p>
-        </div>
-      </div>
-    );
-  }
+  const { authError, navigateToLogin } = useAuth();
 
   if (authError) {
     if (authError.type === 'user_not_registered') {
