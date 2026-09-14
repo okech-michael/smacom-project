@@ -184,7 +184,7 @@ export default function HomePage() {
           </div>
           <div className="lg:col-span-7 space-y-6 text-lg text-slate-600 leading-relaxed">
             <p>
-              Every year, more than a billion tons of organic material end up in landfills, releasing methane and starving soils of the nutrients they need. SMACOM exists to redirect that flow — turning what was once a burden into an engine for prosperity.
+              Every year, more than a billion tons of organic material end up in landfills, releasing methane and starving soils of the nutrients they need. SMACOM redirects that flow and turns a waste burden into a source of value.
             </p>
             <p>
               Through smart collection, high-integrity processing, verifiable impact, and a transparent marketplace, we make it commercially obvious to close the organic loop. The result is cleaner cities, healthier soils, better livelihoods, and a measurably lighter planet.

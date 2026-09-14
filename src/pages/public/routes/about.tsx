@@ -118,11 +118,11 @@ function About() {
           </div>
           <div className="lg:col-span-8 space-y-6 text-lg text-slate-600 leading-relaxed">
             <p>
-              SMACOM began with a simple observation: the same cities generating
-              mountains of organic waste were surrounded by farmland desperate
-              for organic matter. The infrastructure to close that loop
-              &mdash; humanely, transparently, and at scale &mdash; simply did
-              not exist.
+              SMACOM began with a simple observation: cities generating large
+              amounts of organic waste were also close to farmland that needed
+              organic matter. The infrastructure to connect those systems,
+              in a humane, transparent, and scalable way, simply did not
+              exist.
             </p>
             <p>
               We started small. A community collection route. A pilot compost

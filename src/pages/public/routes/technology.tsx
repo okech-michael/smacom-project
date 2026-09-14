@@ -59,7 +59,7 @@ function Technology() {
       <PageHero
         eyebrow="Technology"
         title={<>SMACOM-OS: the operating system for the circular economy.</>}
-        description="A single, coherent platform that unifies sensors, models, dashboards, workflows, security, and payments &mdash; so every touchpoint in the loop is fast, safe, and measurable."
+        description="A single platform unifies sensors, models, dashboards, workflows, security, and payments, so every touchpoint in the loop stays fast, safe, and measurable."
         image={analytics}
         imageAlt="SMACOM-OS analytics dashboard"
       />

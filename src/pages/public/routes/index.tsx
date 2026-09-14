@@ -257,8 +257,8 @@ function Home() {
             <p>
               Every year, more than a billion tons of organic material end up
               in landfills, releasing methane and starving soils of the
-              nutrients they need. SMACOM exists to redirect that flow &mdash;
-              turning what was once a burden into an engine for prosperity.
+              nutrients they need. SMACOM redirects that flow and turns a
+              waste burden into a source of value.
             </p>
             <p>
               Through smart collection, high-integrity processing, verifiable

@@ -73,7 +73,7 @@ const SOLUTIONS = [
     business:
       "Unlock new commercial models such as pay-per-ton, compost-as-a-service, and carbon-backed contracts.",
     environment:
-      "Every kilogram tracked, every claim verifiable &mdash; no leakage, no greenwashing.",
+      "Every kilogram is tracked and every claim can be verified, helping teams avoid leakage and greenwashing.",
     who: "Corporates with sustainability targets, ESG investors, regulators.",
     img: impact,
   },
@@ -145,7 +145,7 @@ function Solutions() {
       <PageHero
         eyebrow="Solutions"
         title={<>End-to-end infrastructure for the circular waste economy.</>}
-        description="Eight tightly-integrated solutions that turn organic waste into environmental impact and shared prosperity, whether you operate a single restaurant or a national utility."
+        description="Eight integrated solutions that turn organic waste into environmental impact and shared prosperity, whether you operate a single restaurant or a national utility."
         image={bioProcessing}
         imageAlt="Interior of a SMACOM bio-processing facility"
       />
