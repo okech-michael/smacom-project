@@ -2,7 +2,7 @@
 
 TanStack Start uses **file-based routing**. Every `.tsx` file in this directory
 defines a route. Do **not** create `src/pages/`, `src/routes/_app/index.tsx`, or
-`app/layout.tsx` — those are Next.js / Remix conventions. The only root layout
+`app/layout.tsx` as a route convention. The only root layout
 is `src/routes/__root.tsx`.
 
 ## Conventions
@@ -12,10 +12,10 @@ is `src/routes/__root.tsx`.
 | `index.tsx` | `/` |
 | `about.tsx` | `/about` |
 | `users/index.tsx` | `/users` |
-| `users/$id.tsx` | `/users/:id` (dynamic — bare `$`, no curly braces) |
+| `users/$id.tsx` | `/users/:id` (dynamic route with a bare `$` in the segment) |
 | `posts/{-$category}.tsx` | `/posts/:category?` (optional segment) |
-| `files/$.tsx` | `/files/*` (splat — read via `_splat` param, never `*`) |
+| `files/$.tsx` | `/files/*` (splat route that is read through `_splat`, not `*`) |
 | `_layout.tsx` | layout route (renders children via `<Outlet />`) |
-| `__root.tsx` | app shell — wraps every page; preserve `<Outlet />` |
+| `__root.tsx` | app shell that wraps every page and preserves `<Outlet />` |
 
 `routeTree.gen.ts` is auto-generated. Don't edit it by hand.

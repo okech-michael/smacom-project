@@ -47,7 +47,7 @@ const SOLUTIONS = [
     title: 'Circular Economy Enablement',
     desc: 'The connective tissue between producers, processors, and end-users, with verified inputs, outputs, and settlements at every stage.',
     business: 'Unlock new commercial models such as pay-per-ton, compost-as-a-service, and carbon-backed contracts.',
-    environment: 'Every kilogram is tracked and every claim can be verified, helping teams avoid leakage and greenwashing.',
+    environment: 'Every kilogram is tracked and every claim can be verified, helping teams avoid leakage and weak environmental claims.',
     who: 'Corporates with sustainability targets, ESG investors, regulators.',
     img: impact,
   },
@@ -97,7 +97,7 @@ const SOLUTIONS = [
     title: 'Digital Waste Tracking',
     desc: 'Every bin, batch, and delivery gets a digital identity, giving every stakeholder line-of-sight from source to soil.',
     business: 'Eliminate paperwork, prove compliance, and provide a data asset to your investors and customers.',
-    environment: 'Traceability that makes greenwashing impossible and community reporting straightforward.',
+    environment: 'Traceability helps teams report clearly and reduce room for weak environmental claims.',
     who: 'Municipalities, corporations, cooperatives, program funders.',
     img: community,
   },
@@ -109,7 +109,7 @@ export default function SolutionsPage() {
       <PageHero
         eyebrow="Solutions"
         title={<>End-to-end infrastructure for the circular waste economy.</>}
-        description="Eight integrated solutions that turn organic waste into environmental impact and shared prosperity, whether you operate a single restaurant or a national utility."
+        description="Eight connected solutions turn organic waste into environmental impact and shared value, whether you operate a single restaurant or a national utility."
         image={bioProcessing}
         imageAlt="Interior of a SMACOM bio-processing facility"
       />

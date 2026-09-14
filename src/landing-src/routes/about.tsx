@@ -118,23 +118,20 @@ function About() {
           </div>
           <div className="lg:col-span-8 space-y-6 text-lg text-slate-600 leading-relaxed">
             <p>
-              SMACOM began with a simple observation: cities generating large
-              amounts of organic waste were also close to farmland that needed
-              organic matter. The infrastructure to connect those systems,
-              in a humane, transparent, and scalable way, simply did not
-              exist.
+              SMACOM began with a simple observation: cities producing large
+              amounts of organic waste were close to farmland that needed
+              organic matter. The infrastructure to connect those two needs
+              was not in place.
             </p>
             <p>
-              We started small. A community collection route. A pilot compost
-              facility. A single farmer cooperative willing to trust the
-              output. Every step taught us something about logistics, biology,
-              incentives, and trust. Then we built the software that made
-              those lessons portable.
+              We started with a community collection route, a pilot compost
+              facility, and a farmer cooperative willing to test the output.
+              Each step helped us understand the work involved in logistics,
+              biology, incentives, and trust.
             </p>
             <p>
-              Today SMACOM is a full-stack climate-tech platform that any
-              waste producer, processor, farmer, or learner can plug into,
-              anywhere in the world.
+              Today SMACOM is a full platform that brings waste producers,
+              processors, farmers, and learners into one connected system.
             </p>
           </div>
         </div>

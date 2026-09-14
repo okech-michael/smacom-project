@@ -72,7 +72,7 @@ function Contact() {
       <PageHero
         eyebrow="Contact"
         title={<>Let&apos;s build the circular economy together.</>}
-        description="Whether you're planning a program, evaluating our technology, or writing a story, we would love to hear from you."
+        description="Tell us what you are working on and we can help map the next step, from collection and processing to learning and market access."
       />
 
       {/* Form + info */}

@@ -74,7 +74,7 @@ function Impact() {
       <PageHero
         eyebrow="Impact"
         title={<>Transparent progress. Verified outcomes.</>}
-        description="SMACOM publishes its impact against a public methodology because circular claims are only meaningful when they can be measured, audited, and improved."
+        description="SMACOM measures the flow of waste, soil inputs, and verified outcomes so the impact can be seen and improved over time."
         image={impact}
         imageAlt="Restored landscape at sunrise"
       />

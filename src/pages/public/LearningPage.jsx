@@ -40,7 +40,7 @@ export default function LearningPage() {
       <PageHero
         eyebrow="Learning Hub"
         title={<>Grow the people who grow the future.</>}
-        description="The SMACOM Learning Hub equips operators, farmers, students, and professionals with practical, accredited skills to build and run circular waste systems."
+        description="The SMACOM Learning Hub helps operators, farmers, students, and professionals learn the practical skills needed to run circular waste systems."
         image={learning}
         imageAlt="Learners in a SMACOM training program"
       />
