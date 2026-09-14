@@ -24,25 +24,25 @@ export const Route = createFileRoute("/contact")({
 
 const OFFICES = [
   {
-    city: "Nairobi (HQ)",
+    city: "Nairobi",
     line1: "SMACOM Solutions Ltd.",
     line2: "Riverside Business Park, Nairobi",
     phone: "+254 700 000 000",
     email: "hello@smacom.solutions",
   },
   {
-    city: "Kigali",
-    line1: "SMACOM Rwanda",
-    line2: "Norrsken House, Kigali",
-    phone: "+250 780 000 000",
-    email: "rwanda@smacom.solutions",
+    city: "Kakamega",
+    line1: "SMACOM Western Kenya",
+    line2: "Kakamega Office Hub, Kakamega",
+    phone: "+254 700 000 001",
+    email: "western@smacom.solutions",
   },
   {
-    city: "Amsterdam",
-    line1: "SMACOM Europe B.V.",
-    line2: "WTC, Zuidplein, Amsterdam",
-    phone: "+31 20 000 0000",
-    email: "europe@smacom.solutions",
+    city: "Kisii",
+    line1: "SMACOM Nyanza Program",
+    line2: "Kisii Community Operations, Kisii",
+    phone: "+254 700 000 002",
+    email: "kisii@smacom.solutions",
   },
 ];
 
