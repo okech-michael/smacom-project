@@ -111,7 +111,7 @@ const NEWS = [
 export default function HomePage() {
   return (
     <div className="bg-background">
-      <section className="relative overflow-hidden pt-28 pb-16 md:pt-40 md:pb-24">
+      <section className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24">
         <div
           className="absolute inset-0 -z-10 pointer-events-none"
           style={{
