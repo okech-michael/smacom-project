@@ -163,13 +163,6 @@ function Home() {
         />
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-spring/10 text-forest text-[11px] font-bold uppercase tracking-widest mb-6">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-spring opacity-75 animate-ping" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-spring" />
-              </span>
-              Climate-tech for the circular economy
-            </div>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 leading-[1.02] text-balance font-display">
               Turning Organic Waste into{" "}
               <span className="text-forest">Sustainable Wealth.</span>
