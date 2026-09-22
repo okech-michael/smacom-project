@@ -6,25 +6,25 @@
 
 @layer base {
   :root {
-    --background: 140 10% 98%;
-    --foreground: 150 10% 8%;
+    --background: 60 9% 98%;
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
     --card-foreground: 150 10% 8%;
     --popover: 0 0% 100%;
     --popover-foreground: 150 10% 8%;
-    --primary: 142 71% 45%;
+    --primary: 175 77% 26%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 140 10% 95%;
+    --secondary: 160 18% 94%;
     --secondary-foreground: 150 10% 15%;
     --muted: 140 8% 93%;
     --muted-foreground: 150 5% 45%;
-    --accent: 142 71% 45%;
+    --accent: 38 92% 50%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 140 8% 90%;
-    --input: 140 8% 90%;
-    --ring: 142 71% 45%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 175 77% 26%;
     --chart-1: 142 71% 45%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -94,7 +94,7 @@
     @apply bg-background text-foreground font-body;
     font-family: var(--font-body);
     color: hsl(var(--foreground));
-    background-image: radial-gradient(circle at 70% 10%, rgba(187,247,208,0.10), transparent 20%), radial-gradient(circle at 12% 82%, rgba(22,101,52,0.06), transparent 26%);
+    background-color: #fafaf9;
   }
 
   h1,
@@ -109,8 +109,21 @@
 
 @layer components {
   .site-header {
-    box-shadow: 0 1px 0 rgba(22, 101, 52, 0.05);
+    box-shadow: 0 1px 0 rgba(15, 118, 110, 0.08);
   }
+
+  .eyebrow { color: #0f766e; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+  .eyebrow-dark { color: #fbbf24; }
+  .section-heading { color: #0f172a; font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 650; letter-spacing: -0.02em; line-height: 1.2; }
+  .button-primary, .button-secondary, .button-amber { display: inline-flex; min-height: 3rem; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 0.5rem; padding: 0.75rem 1.25rem; font-size: 0.9375rem; font-weight: 600; transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease; }
+  .button-primary { background: #0f766e; color: white; }
+  .button-primary:hover { background: #0d9488; }
+  .button-secondary { border: 1px solid #cbd5e1; color: #0f172a; }
+  .button-secondary:hover { border-color: #0f766e; color: #0f766e; }
+  .button-amber { background: #f59e0b; color: #0f172a; }
+  .button-amber:hover { background: #fbbf24; }
+  .skip-link { position: fixed; left: 1rem; top: 1rem; z-index: 60; transform: translateY(-200%); border-radius: 0.5rem; background: #0f172a; color: white; padding: 0.75rem 1rem; }
+  .skip-link:focus { transform: translateY(0); }
 
   .nav-link {
     position: relative;

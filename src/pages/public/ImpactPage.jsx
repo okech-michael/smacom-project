@@ -1,49 +1,14 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, BarChart3, FileCheck2, LineChart } from 'lucide-react';
 import { PageHero } from '@/components/public/PageHero';
 import { CtaBanner } from '@/components/public/CtaBanner';
 import impact from '@/assets/impact.jpg';
-import farmers from '@/assets/farmers.jpg';
-import community from '@/assets/community.jpg';
 
-const HEADLINE_STATS = [
-  { v: '840K', l: 'Tons CO₂ equivalent avoided', d: 'Verified using an independent GHG methodology.' },
-  { v: '1.2M', l: 'Tons of organic waste diverted', d: 'From landfills into productive bio-processing.' },
-  { v: '52K+', l: 'Farmers actively supported', d: 'Sourcing certified bio-inputs at fair prices.' },
-  { v: '180+', l: 'Communities served', d: 'Neighborhoods with active organics collection.' },
-  { v: '3.5K', l: 'Operators and learners trained', d: 'Certified via the SMACOM Learning Hub.' },
-  { v: '38', l: 'Processing facilities integrated', d: 'Running on SMACOM-OS with full audit trails.' },
-];
-
-const TIMELINE_MILESTONES = [
-  { year: '2022', h: 'First 100k tons diverted', d: 'The platform crosses a symbolic operational threshold.' },
-  { year: '2023', h: 'First carbon program verified', d: 'Independent verification of a nature-based avoidance pathway.' },
-  { year: '2024', h: '10,000 farmers on marketplace', d: 'The marketplace reaches five-figure active users.' },
-  { year: '2025', h: 'First regional expansion', d: 'Second regional hub goes live with municipal partners.' },
-  { year: '2026', h: '1M ton milestone', d: 'Cumulative organic waste diverted crosses one million tons.' },
-];
-
-const STORIES = [
-  {
-    tag: 'Farmer',
-    title: 'Doubling maize yield without synthetic fertilizer',
-    quote: 'In two seasons using SMACOM bio-fertilizer, my yield went from 12 to 24 bags per acre. My soil holds water again.',
-    name: 'Rebecca N., Nakuru',
-    img: farmers,
-  },
-  {
-    tag: 'Municipality',
-    title: 'Cutting landfill volume by more than half',
-    quote: 'Working with SMACOM, we cut organic landfill volume by 58% in eighteen months and freed capacity for a decade.',
-    name: 'City of Kisumu, Waste Directorate',
-    img: community,
-  },
-  {
-    tag: 'Corporate',
-    title: 'A hotel group that pays for itself',
-    quote: 'Between avoided landfill fees and organic input sales, our waste program is now a positive contributor to the P&L.',
-    name: 'Lakeside Hotel Group',
-    img: impact,
-  },
+const EVIDENCE_AREAS = [
+  ['Operational records', 'Track collection, processing and marketplace activity in one connected system.', BarChart3],
+  ['Reporting workflows', 'Give teams a practical foundation for reviewing performance and communicating progress.', LineChart],
+  ['Reviewable evidence', 'Publish outcomes when the underlying data, methodology and permissions are available.', FileCheck2],
 ];
 
 export default function ImpactPage() {
@@ -51,114 +16,45 @@ export default function ImpactPage() {
     <div className="bg-background">
       <PageHero
         eyebrow="Impact"
-        title={<>Transparent progress. Verified outcomes.</>}
-        description="SMACOM measures the flow of waste, soil inputs, and verified outcomes so the impact can be seen and improved over time."
+        title={<>Make progress measurable and reviewable.</>}
+        description="SMACOM helps organisations record the activity behind organic waste systems so operational and environmental progress can be assessed with appropriate evidence."
         image={impact}
-        imageAlt="Restored landscape at sunrise"
+        imageAlt="Organic landscape used to illustrate measurable environmental progress"
       />
 
-      <section className="py-16 md:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {HEADLINE_STATS.map((s) => (
-              <div key={s.l} className="p-8 rounded-3xl bg-slate-50 ring-1 ring-slate-200">
-                <div className="text-5xl md:text-6xl font-bold text-[#166534] font-display">{s.v}</div>
-                <div className="mt-3 font-semibold text-slate-900">{s.l}</div>
-                <p className="mt-2 text-sm text-slate-600 leading-relaxed">{s.d}</p>
+      <section className="bg-white py-20 md:py-28" aria-labelledby="evidence-heading">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="eyebrow">Evidence-led by design</p>
+            <h2 id="evidence-heading" className="section-heading mt-4">Impact reporting should start with the record, not the headline.</h2>
+            <p className="mt-5 text-lg leading-8 text-[#475569]">The public site does not publish statistics, testimonials or partner claims until supporting information is available for client review and sign-off.</p>
+          </div>
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {EVIDENCE_AREAS.map(([title, description, Icon]) => (
+              <div key={title} className="rounded-2xl border border-[#dfe9e4] bg-[#f7faf8] p-7">
+                <Icon className="h-6 w-6 text-[#0f766e]" aria-hidden="true" />
+                <h3 className="mt-5 text-xl font-semibold text-[#0f172a]">{title}</h3>
+                <p className="mt-3 leading-7 text-[#475569]">{description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-slate-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="max-w-3xl mb-10">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#22c55e]">Waste diverted over time</span>
-            <h2 className="mt-4 text-3xl md:text-4xl font-bold text-slate-900 font-display text-balance">A steepening curve, year after year.</h2>
+      <section className="bg-[#f7faf8] py-20 md:py-28">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-6 md:grid-cols-12 lg:px-8">
+          <div className="md:col-span-7">
+            <p className="eyebrow">Work with the team</p>
+            <h2 className="section-heading mt-4">Bring the right questions and we can map the evidence you need.</h2>
+            <p className="mt-5 text-lg leading-8 text-[#475569]">Whether you generate organic waste, operate processing capacity or use agricultural outputs, start with the workflow and reporting requirements that matter to you.</p>
           </div>
-          <div className="rounded-3xl bg-white ring-1 ring-slate-200 p-8">
-            <BarChart />
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 md:py-24 bg-white">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="max-w-3xl mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#22c55e]">Impact timeline</span>
-            <h2 className="mt-4 text-3xl md:text-4xl font-bold text-slate-900 font-display text-balance">Key milestones on the way to 1M tons diverted.</h2>
-          </div>
-          <ol className="relative border-l-2 border-slate-200 pl-8 space-y-10">
-            {TIMELINE_MILESTONES.map((m) => (
-              <li key={m.year} className="relative">
-                <span className="absolute -left-[41px] top-1 grid size-6 place-items-center rounded-full bg-[#166534] ring-4 ring-white">
-                  <span className="size-2 rounded-full bg-[#22c55e]" />
-                </span>
-                <div className="text-sm font-bold tracking-widest text-[#22c55e]">{m.year}</div>
-                <h3 className="mt-1 text-xl font-bold text-slate-900 font-display">{m.h}</h3>
-                <p className="mt-1 text-slate-600 leading-relaxed">{m.d}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <section className="py-24 md:py-32 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="max-w-3xl mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#22c55e]">Success stories</span>
-            <h2 className="mt-4 text-4xl md:text-5xl font-bold text-slate-900 font-display text-balance">Impact you can hear in the first person.</h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {STORIES.map((s) => (
-              <article key={s.title} className="rounded-3xl overflow-hidden bg-white ring-1 ring-slate-200">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img src={s.img} alt={s.title} loading="lazy" className="h-full w-full object-cover" />
-                </div>
-                <div className="p-6">
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-[#22c55e]">{s.tag}</span>
-                  <h3 className="mt-2 text-lg font-bold text-slate-900 font-display leading-snug">{s.title}</h3>
-                  <blockquote className="mt-3 text-slate-600 leading-relaxed">“{s.quote}”</blockquote>
-                  <div className="mt-4 text-sm font-semibold text-slate-700">{s.name}</div>
-                </div>
-              </article>
-            ))}
+          <div className="md:col-span-5 md:justify-self-end">
+            <Link to="/contact" className="button-primary">Discuss your requirements <ArrowRight className="h-4 w-4" /></Link>
           </div>
         </div>
       </section>
 
       <CtaBanner />
-    </div>
-  );
-}
-
-function BarChart() {
-  const bars = [
-    { y: '2020', v: 40 },
-    { y: '2021', v: 95 },
-    { y: '2022', v: 180 },
-    { y: '2023', v: 320 },
-    { y: '2024', v: 540 },
-    { y: '2025', v: 820 },
-    { y: '2026', v: 1200 },
-  ];
-  const max = Math.max(...bars.map((b) => b.v));
-  return (
-    <div>
-      <div className="flex items-end gap-4 h-56 md:h-72">
-        {bars.map((b) => {
-          const h = (b.v / max) * 100;
-          return (
-            <div key={b.y} className="flex-1 flex flex-col items-center gap-2">
-              <div className="w-full flex justify-center text-xs font-semibold text-[#166534]">{b.v}</div>
-              <div className="w-full rounded-t-xl bg-gradient-to-t from-[#166534] to-[#22c55e] transition-all" style={{ height: `${h}%` }} />
-              <div className="text-xs text-slate-500">{b.y}</div>
-            </div>
-          );
-        })}
-      </div>
-      <div className="mt-4 text-xs text-slate-500">Cumulative tons of organic waste diverted, in thousands.</div>
     </div>
   );
 }

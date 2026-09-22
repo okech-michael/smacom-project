@@ -1,30 +1,6 @@
 import React, { useState } from 'react';
-import { Mail, MapPin, Phone, Clock, Linkedin, Twitter, Facebook } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { PageHero } from '@/components/public/PageHero';
-
-const OFFICES = [
-  {
-    city: 'Nairobi',
-    line1: 'SMACOM Solutions Ltd.',
-    line2: 'Riverside Business Park, Nairobi',
-    phone: '+254 700 000 000',
-    email: 'hello@smacom.solutions',
-  },
-  {
-    city: 'Kakamega',
-    line1: 'SMACOM Western Kenya',
-    line2: 'Kakamega Office Hub, Kakamega',
-    phone: '+254 700 000 001',
-    email: 'western@smacom.solutions',
-  },
-  {
-    city: 'Kisii',
-    line1: 'SMACOM Nyanza Program',
-    line2: 'Kisii Community Operations, Kisii',
-    phone: '+254 700 000 002',
-    email: 'kisii@smacom.solutions',
-  },
-];
 
 const FAQS = [
   {
@@ -37,11 +13,11 @@ const FAQS = [
   },
   {
     q: 'Where can I buy SMACOM bio-fertilizer?',
-    a: 'Certified products are available through the SMACOM Eco Marketplace with regional distribution. Contact us for bulk enquiries or cooperative onboarding.',
+    a: 'Contact the team to discuss marketplace access, product information and cooperative onboarding.',
   },
   {
     q: 'How do you verify environmental impact?',
-    a: 'Every ton diverted and every kilogram of soil restored is tracked in SMACOM-OS with an independent verification layer aligned to leading environmental methodologies.',
+    a: 'The team can discuss the records and reporting workflows relevant to your programme. Specific verified outcomes require supporting data and review.',
   },
 ];
 
@@ -95,49 +71,8 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <div className="lg:col-span-5 space-y-6">
-            <InfoCard icon={Mail} title="Email" body="hello@smacom.solutions" />
-            <InfoCard icon={Phone} title="Phone" body="+254 700 000 000" />
-            <InfoCard icon={Clock} title="Business hours" body="Mon-Fri, 08:00 - 18:00 EAT" />
-            <div className="p-6 rounded-3xl bg-[#166534] text-white">
-              <h3 className="font-bold font-display text-lg">Follow SMACOM</h3>
-              <p className="mt-2 text-white/70 text-sm">Get updates in your feed as we ship new programs, research, and partnerships.</p>
-              <div className="mt-4 flex gap-3">
-                {[Linkedin, Twitter, Facebook].map((Icon, i) => (
-                  <a key={i} href="#" aria-label="Social" className="grid size-10 place-items-center rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-                    <Icon size={16} />
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 md:py-24 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="max-w-2xl mb-12">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#22c55e]">Offices</span>
-            <h2 className="mt-4 text-3xl md:text-4xl font-bold text-slate-900 font-display text-balance">Three offices. One integrated network.</h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {OFFICES.map((o) => (
-              <div key={o.city} className="p-8 rounded-3xl bg-white ring-1 ring-slate-200">
-                <div className="flex items-center gap-2 text-[#166534]">
-                  <MapPin size={16} />
-                  <h3 className="font-bold text-lg font-display text-slate-900">{o.city}</h3>
-                </div>
-                <p className="mt-3 text-slate-600 leading-relaxed">{o.line1}<br />{o.line2}</p>
-                <div className="mt-4 pt-4 border-t border-slate-100 text-sm text-slate-500 space-y-1">
-                  <div>{o.phone}</div>
-                  <div>{o.email}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-12 rounded-3xl overflow-hidden ring-1 ring-slate-200 aspect-[16/7] bg-white">
-            <iframe title="SMACOM headquarters map" src="https://www.openstreetmap.org/export/embed.html?bbox=36.8,-1.3,36.85,-1.25&layer=mapnik" className="w-full h-full" loading="lazy" />
+          <div id="partnerships" className="lg:col-span-5 space-y-6">
+            <InfoCard icon={Mail} title="Email" body="hello@smacom.co.ke" />
           </div>
         </div>
       </section>
