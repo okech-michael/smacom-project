@@ -20,7 +20,7 @@ const VALUES = [
   {
     icon: Award,
     title: 'Scientific Rigor',
-    desc: 'Measurement, verification, and open data underpin every ton diverted and every kilogram of soil restored.',
+    desc: 'Measurement and clear records help teams understand the work and improve it over time.',
   },
   {
     icon: Heart,
@@ -35,35 +35,7 @@ const VALUES = [
   {
     icon: Eye,
     title: 'Transparent by Default',
-    desc: 'Traceable inputs, verified outcomes, and open governance keep the platform honest across every stakeholder.',
-  },
-];
-
-const TIMELINE = [
-  {
-    year: '2019',
-    title: 'The founding thesis',
-    desc: 'SMACOM begins as a research project mapping the true economic potential of organic waste streams in East Africa.',
-  },
-  {
-    year: '2020',
-    title: 'First processing pilot',
-    desc: 'We launch a community-scale composting facility serving 400 households and prove the unit economics.',
-  },
-  {
-    year: '2022',
-    title: 'SMACOM-OS platform release',
-    desc: 'The role-based operating platform unifies collection, processing, monitoring, and marketplace in one system.',
-  },
-  {
-    year: '2024',
-    title: 'Marketplace and Learning launch',
-    desc: 'The Eco Marketplace opens to farmers and the Learning Hub certifies its first cohort of circular economy practitioners.',
-  },
-  {
-    year: '2026',
-    title: 'Regional expansion',
-    desc: 'Flagship facilities and networks activate across three regions, with verified carbon credits issued at scale.',
+    desc: 'Clear responsibilities and reviewable records help stakeholders work from the same information.',
   },
 ];
 
@@ -94,7 +66,7 @@ export default function AboutPage() {
               We started with a community collection route, a pilot compost facility, and a farmer cooperative willing to test the output. Each step helped us understand the work involved in logistics, biology, incentives, and trust.
             </p>
             <p>
-              Today SMACOM is a full platform that brings waste producers, processors, farmers, and learners into one connected system.
+              SMACOM is building a connected platform for waste producers, processors, farmers, and learners.
             </p>
           </div>
         </div>
@@ -139,27 +111,6 @@ export default function AboutPage() {
               );
             })}
           </div>
-        </div>
-      </section>
-
-      <section className="py-24 md:py-32 bg-slate-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="max-w-3xl mb-16">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#22c55e]">Company Timeline</span>
-            <h2 className="mt-4 text-4xl md:text-5xl font-bold text-slate-900 font-display text-balance">A decade of iteration.</h2>
-          </div>
-          <ol className="relative border-l-2 border-slate-200 pl-8 md:pl-12 space-y-12">
-            {TIMELINE.map((t) => (
-              <li key={t.year} className="relative">
-                <span className="absolute -left-10 md:-left-14 top-1 grid size-6 place-items-center rounded-full bg-[#166534] ring-4 ring-slate-50">
-                  <span className="size-2 rounded-full bg-[#22c55e]" />
-                </span>
-                <div className="text-sm font-bold tracking-widest text-[#22c55e]">{t.year}</div>
-                <h3 className="mt-2 text-2xl font-bold text-slate-900 font-display">{t.title}</h3>
-                <p className="mt-2 text-slate-600 leading-relaxed max-w-2xl">{t.desc}</p>
-              </li>
-            ))}
-          </ol>
         </div>
       </section>
 

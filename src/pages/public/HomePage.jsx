@@ -2,331 +2,144 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
-  Leaf,
-  Truck,
+  BarChart3,
+  Check,
+  ChevronRight,
+  CircleDot,
   Factory,
-  Cpu,
-  ShoppingBag,
-  Sprout,
-  Globe2,
-  ShieldCheck,
   LineChart,
-  GraduationCap,
+  MapPinned,
+  Sprout,
+  Truck,
 } from 'lucide-react';
 import heroAerial from '@/assets/hero-aerial.jpg';
 import wasteCollection from '@/assets/waste-collection.jpg';
 import bioProcessing from '@/assets/bio-processing.jpg';
-import iotSensor from '@/assets/iot-sensor.jpg';
-import analytics from '@/assets/analytics.jpg';
-import farmers from '@/assets/farmers.jpg';
 import marketplace from '@/assets/marketplace.jpg';
-import community from '@/assets/community.jpg';
+import analytics from '@/assets/analytics.jpg';
 import { CtaBanner } from '@/components/public/CtaBanner';
-
-const STATS = [
-  { value: '1.2M', label: 'Tons of organic waste diverted' },
-  { value: '840K', label: 'Tons of CO₂ equivalent avoided' },
-  { value: '52K+', label: 'Farmers active on the network' },
-  { value: '38', label: 'Processing facilities integrated' },
-];
 
 const SOLUTIONS = [
   {
-    n: '01',
-    title: 'Waste Producers',
-    desc: 'Digital tracking, scheduled collection, and impact reporting for hotels, markets, campuses, and municipalities.',
-    img: wasteCollection,
+    title: 'Waste producers',
+    audience: 'Hotels, markets, campuses, municipalities and institutions.',
+    problem: 'Disposal costs, compliance pressure and limited visibility.',
+    provides: 'Digital tracking, scheduled collection and impact reporting.',
+    outcome: 'Lower disposal costs and sustainability data your team can use.',
     href: '/solutions',
+    image: wasteCollection,
   },
   {
-    n: '02',
-    title: 'Bio-Processors',
-    desc: 'Sensor-monitored composting and anaerobic digestion facilities engineered for optimal nutrient recovery.',
-    img: bioProcessing,
+    title: 'Bio-processors',
+    audience: 'Composting and anaerobic digestion operators.',
+    problem: 'Inconsistent feedstock quality and limited process visibility.',
+    provides: 'Sensor-monitored operations and quality optimisation tools.',
+    outcome: 'More consistent nutrient recovery and reliable offtake.',
     href: '/solutions',
+    image: bioProcessing,
   },
   {
-    n: '03',
-    title: 'Eco Marketplace',
-    desc: 'Direct-to-farmer distribution of premium bio-fertilizer, biochar, and animal feed produced from processed waste.',
-    img: marketplace,
+    title: 'Eco marketplace',
+    audience: 'Farmers and agricultural buyers.',
+    problem: 'Limited access to consistent quality agricultural inputs.',
+    provides: 'A direct marketplace for processed organic outputs.',
+    outcome: 'More confident sourcing of traceable soil and farm inputs.',
     href: '/marketplace',
+    image: marketplace,
   },
 ];
 
-const ECOSYSTEM = [
-  { icon: Truck, label: 'Waste Producer', desc: 'Segregation at source' },
-  { icon: Leaf, label: 'Collection', desc: 'Smart route logistics' },
-  { icon: Factory, label: 'Bio-Processor', desc: 'Nutrient recovery' },
-  { icon: Cpu, label: 'IoT Monitoring', desc: 'Real-time telemetry' },
-  { icon: ShoppingBag, label: 'Marketplace', desc: 'Fair-price distribution' },
-  { icon: Sprout, label: 'Farmer', desc: 'Regenerative growth' },
-  { icon: Globe2, label: 'Impact', desc: 'Verified carbon reduction' },
+const STEPS = [
+  { label: 'Source', description: 'Organisations identify and separate organic material at the point of generation.', icon: CircleDot },
+  { label: 'Collect', description: 'Scheduled collection connects material to the right processing capacity.', icon: Truck },
+  { label: 'Process', description: 'Operators manage organic streams and monitor the information that matters.', icon: Factory },
+  { label: 'Match', description: 'Processed outputs are connected with agricultural buyers and farmers.', icon: MapPinned },
+  { label: 'Farm', description: 'Useful inputs return to the field with clearer records of origin and use.', icon: Sprout },
 ];
 
-const TESTIMONIALS = [
-  {
-    quote: 'SMACOM turned our kitchen waste liability into a revenue line. Their IoT dashboards make sustainability reporting effortless for our sixty properties.',
-    name: 'Amina Okoye',
-    role: 'Head of Sustainability, Lakeside Hotel Group',
-  },
-  {
-    quote: 'The bio-fertilizer we source through the marketplace has lifted our yields measurably. Our soil is genuinely healthier than it was three seasons ago.',
-    name: 'Joseph Mwangi',
-    role: 'Farmer, Rift Valley Cooperative',
-  },
-  {
-    quote: 'As a municipality we need traceability. The SMACOM platform gives us line-of-sight from bin to farm, with the audit trail our regulators expect.',
-    name: 'Dr. Elena Rossi',
-    role: 'Waste Director, City of Genova',
-  },
-];
-
-const PARTNERS = ['MinAgri', 'UNEP', 'GreenTech', 'AgriBank', 'EcoCert', 'OpenClimate'];
-
-const NEWS = [
-  {
-    tag: 'Announcement',
-    date: 'March 12, 2026',
-    title: 'SMACOM opens flagship bio-processing facility in Kisumu',
-    excerpt: 'The new plant will divert 40,000 tons of organic waste annually and supply 12,000 farmers with certified bio-fertilizer.',
-    img: bioProcessing,
-  },
-  {
-    tag: 'Research',
-    date: 'February 28, 2026',
-    title: 'How IoT telemetry raised compost quality by 32%',
-    excerpt: 'A field study across eight processing sites shows how real-time sensor loops optimize aeration and microbial activity.',
-    img: iotSensor,
-  },
-  {
-    tag: 'Impact',
-    date: 'February 4, 2026',
-    title: 'Community collection pilot delivers first carbon credits',
-    excerpt: 'Our neighborhood collection model in Nairobi has been verified for high-quality nature-based carbon removal.',
-    img: community,
-  },
+const PLATFORM_POINTS = [
+  ['Digital platform', 'Coordinate participants, records and workflows across the organic value chain.'],
+  ['IoT monitoring', 'Bring operational sensor data into the places teams use to manage processing.'],
+  ['Marketplace', 'Connect processed outputs with farmers and agricultural buyers.'],
+  ['Data and reporting', 'Turn activity records into practical reporting for operations and partners.'],
 ];
 
 export default function HomePage() {
   return (
-    <div className="bg-background">
-      <section className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24">
-        <div
-          className="absolute inset-0 -z-10 pointer-events-none"
-          style={{
-            background:
-              'radial-gradient(1200px 600px at 15% 0%, rgba(187, 247, 208, 0.35), transparent 60%), radial-gradient(900px 500px at 100% 0%, rgba(147, 197, 253, 0.3), transparent 60%)',
-          }}
-        />
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <div className="max-w-2xl">
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 leading-[1.02] text-balance font-display">
-              Turning Organic Waste into <span className="text-[#166534]">Sustainable Wealth.</span>
+    <div className="overflow-hidden bg-background">
+      <section className="relative border-b border-border/70 bg-[#f4f8f6]">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 py-16 md:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-28">
+          <div className="max-w-3xl">
+            <p className="eyebrow">Circular organic infrastructure</p>
+            <h1 className="mt-5 text-4xl font-semibold leading-[1.08] tracking-tight text-[#0f172a] sm:text-5xl lg:text-[3.5rem]">
+              Organic waste infrastructure that connects producers, processors and farmers.
             </h1>
-            <p className="mt-7 text-lg md:text-xl text-slate-600 leading-relaxed max-w-xl">
-              SMACOM Solutions unites waste producers, bio-processors, and farmers in one intelligent platform, converting the world&apos;s organic surplus into regenerative agricultural value.
+            <p className="mt-7 max-w-2xl text-lg leading-8 text-[#475569]">
+              SMACOM provides the digital platform, IoT monitoring and marketplace that turn organic waste streams into measurable agricultural inputs and verified impact data.
             </p>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <Link to="/solutions" className="inline-flex items-center gap-2 px-7 py-4 bg-[#166534] text-white font-semibold rounded-2xl hover:bg-[#14532d] transition-colors shadow-xl shadow-[#166534]/15">
-                Explore Solutions <ArrowRight size={18} />
-              </Link>
-              <Link to="/contact" className="inline-flex items-center gap-2 px-7 py-4 border border-slate-200 text-slate-900 font-semibold rounded-2xl hover:bg-slate-50 transition-colors">
-                Request a Demo
-              </Link>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Link to="/contact" className="button-primary">Request a demo <ArrowRight className="h-4 w-4" /></Link>
+              <Link to="/solutions" className="button-secondary">Explore solutions</Link>
             </div>
-          </div>
-
-          <div className="relative">
-            <div className="relative aspect-square w-full overflow-hidden rounded-[40px] shadow-2xl outline outline-1 -outline-offset-1 outline-black/5">
-              <img src={heroAerial} alt="Aerial view of a circular organic farm and bio-processing facility" className="h-full w-full object-cover" />
+            <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-[#475569]">
+              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 text-[#0f766e]" /> Source-to-farm visibility</span>
+              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 text-[#0f766e]" /> Built for Kenyan operators</span>
             </div>
-            <div className="absolute -bottom-8 -left-6 md:-left-10 bg-white/95 backdrop-blur-md p-6 md:p-7 rounded-2xl shadow-2xl border border-slate-100 max-w-[260px]">
-              <div className="text-4xl font-bold text-[#166534] font-display">140k+</div>
-              <div className="mt-1 text-sm text-slate-500 font-medium leading-snug">Tons of waste diverted from landfills this year alone.</div>
-            </div>
-            <div className="absolute -top-6 -right-4 md:-right-8 bg-[#166534] text-white p-5 rounded-2xl shadow-xl max-w-[220px]">
-              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-[#bbf7d0]">
-                <span className="size-2 rounded-full bg-[#bbf7d0] animate-pulse" />
-                Live IoT
-              </div>
-              <div className="mt-2 text-sm font-medium leading-snug">Processing 4.2 tons of organic matter per hour at Site A.</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-24 md:mt-32 max-w-7xl mx-auto px-6">
-          <div className="rounded-3xl bg-white ring-1 ring-slate-200 shadow-sm px-8 py-10 grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {STATS.map((s) => (
-              <div key={s.label}>
-                <div className="text-4xl md:text-5xl font-bold text-[#166534] font-display">{s.value}</div>
-                <div className="mt-1.5 text-sm text-slate-500 font-medium leading-snug">{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 md:py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-5">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#22c55e]">Our Mission</span>
-            <h2 className="mt-4 text-4xl md:text-5xl font-bold text-slate-900 font-display leading-tight text-balance">
-              A regenerative economy, built from the ground up.
-            </h2>
-          </div>
-          <div className="lg:col-span-7 space-y-6 text-lg text-slate-600 leading-relaxed">
-            <p>
-              Organic material is often treated as something to remove. In many places, that material is still valuable. When it is not handled well, the wasted nutrients, disposal costs, and methane emissions continue to grow.
-            </p>
-            <p>
-              SMACOM helps organize the chain from waste source to processing, farm, and market. The result is a clearer path to recover organic material, reduce landfill pressure, and create useful value for communities.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 md:py-32 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="max-w-3xl mb-16 md:mb-20">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#22c55e]">Solutions</span>
-            <h2 className="mt-4 text-4xl md:text-5xl font-bold text-slate-900 font-display text-balance">A complete circular ecosystem.</h2>
-            <p className="mt-5 text-lg text-slate-600 max-w-2xl">One integrated platform serving every stakeholder in the organic value chain, from the point of waste to the point of harvest.</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-            {SOLUTIONS.map((s) => (
-              <Link key={s.title} to={s.href} className="group flex flex-col p-8 bg-white rounded-3xl border border-slate-200 hover:border-[#166534]/30 transition-all hover:shadow-xl hover:-translate-y-1 duration-300">
-                <div className="size-12 rounded-2xl grid place-items-center mb-6 font-bold text-lg font-display bg-[#ecfdf3] text-[#166534]">
-                  {s.n}
-                </div>
-                <h3 className="text-2xl font-bold text-slate-900 font-display mb-3">{s.title}</h3>
-                <p className="text-slate-600 leading-relaxed mb-8">{s.desc}</p>
-                <div className="mt-auto overflow-hidden rounded-xl aspect-[16/10]">
-                  <img src={s.img} alt={s.title} loading="lazy" className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                </div>
-                <div className="mt-6 inline-flex items-center gap-2 text-[#166534] font-semibold">Learn more <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" /></div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 md:py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-16 md:mb-20">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#22c55e]">How SMACOM Works</span>
-            <h2 className="mt-4 text-4xl md:text-5xl font-bold text-slate-900 font-display text-balance">One loop. Seven touchpoints. Zero waste.</h2>
-            <p className="mt-5 text-lg text-slate-600">Follow a banana peel from a hotel kitchen in Nairobi to a maize field in Nakuru. Every step is measured, monetized, and regenerative.</p>
           </div>
           <div className="relative">
-            <div className="hidden md:block absolute top-8 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#166534]/25 to-transparent" />
-            <ol className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6">
-              {ECOSYSTEM.map((step, i) => {
-                const Icon = step.icon;
-                return (
-                  <li key={step.label} className="relative flex flex-col items-center text-center">
-                    <div className="relative z-10 grid size-16 place-items-center rounded-2xl bg-white ring-1 ring-slate-200 shadow-sm text-[#166534]"><Icon size={22} /></div>
-                    <div className="mt-4 text-[11px] font-bold uppercase tracking-widest text-[#22c55e]">Step {String(i + 1).padStart(2, '0')}</div>
-                    <div className="mt-1 font-semibold text-slate-900">{step.label}</div>
-                    <div className="mt-1 text-sm text-slate-500 leading-snug">{step.desc}</div>
-                  </li>
-                );
-              })}
-            </ol>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 md:py-32 bg-[#166534] text-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-          <div className="relative">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-3xl overflow-hidden ring-1 ring-white/10">
-                <img src={iotSensor} alt="IoT soil sensor in field" loading="lazy" className="w-full aspect-[4/5] object-cover" />
-              </div>
-              <div className="pt-12">
-                <div className="rounded-3xl overflow-hidden ring-1 ring-white/10">
-                  <img src={analytics} alt="Analytics dashboard" loading="lazy" className="w-full aspect-[4/5] object-cover" />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-[#bbf7d0]">Technology</span>
-            <h2 className="mt-4 text-4xl md:text-5xl font-bold font-display text-balance">Data-rich operating infrastructure for every link in the loop.</h2>
-            <p className="mt-6 text-lg text-white/80 leading-relaxed">SMACOM-OS turns every collection event, processing batch, and marketplace exchange into an auditable digital asset so communities and investors can trust the outcomes.</p>
-            <div className="mt-8 grid sm:grid-cols-2 gap-4">
-              <div className="rounded-2xl border border-white/10 bg-white/10 p-5">
-                <div className="flex items-center gap-2 text-[#bbf7d0] font-semibold"><LineChart size={16} /> Live monitoring</div>
-                <p className="mt-2 text-sm text-white/70">Sensor-backed visibility across collection, processing, and field performance.</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/10 p-5">
-                <div className="flex items-center gap-2 text-[#bbf7d0] font-semibold"><ShieldCheck size={16} /> Verified outcomes</div>
-                <p className="mt-2 text-sm text-white/70">High-integrity reporting that supports carbon, compliance, and community narratives.</p>
+            <div className="overflow-hidden rounded-2xl border border-[#d9e5e0] bg-white shadow-[0_20px_60px_rgba(15,118,110,0.12)]">
+              <img src={heroAerial} alt="Organic farm and processing landscape" className="aspect-[4/3] h-full w-full object-cover" fetchPriority="high" />
+              <div className="grid grid-cols-3 divide-x divide-[#d9e5e0] border-t border-[#d9e5e0] bg-white">
+                <div className="p-4"><p className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">Source</p><p className="mt-1 text-sm font-semibold text-[#0f172a]">Capture</p></div>
+                <div className="p-4"><p className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">Process</p><p className="mt-1 text-sm font-semibold text-[#0f172a]">Recover</p></div>
+                <div className="p-4"><p className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">Farm</p><p className="mt-1 text-sm font-semibold text-[#0f172a]">Apply</p></div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-24 md:py-32 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-14">
-            <div className="max-w-3xl">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#22c55e]">What people say</span>
-              <h2 className="mt-4 text-4xl md:text-5xl font-bold text-slate-900 font-display text-balance">Trusted by operators, farmers, and municipalities.</h2>
-            </div>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map((t) => (
-              <div key={t.name} className="rounded-3xl bg-white p-8 border border-slate-200 shadow-sm">
-                <p className="text-slate-600 leading-relaxed">“{t.quote}”</p>
-                <div className="mt-6">
-                  <div className="font-semibold text-slate-900">{t.name}</div>
-                  <div className="text-sm text-slate-500">{t.role}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+      <section className="border-b border-border/70 bg-white py-16 md:py-20" aria-labelledby="problem-heading">
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-12 md:gap-16 lg:px-8">
+          <div className="md:col-span-5"><p className="eyebrow">The operating challenge</p><h2 id="problem-heading" className="section-heading mt-4">Organic waste is still a cost and an emissions problem.</h2></div>
+          <div className="space-y-5 text-lg leading-8 text-[#475569] md:col-span-7"><p>Organic waste is still treated as a disposal problem in most places. The result is lost nutrients, rising costs and avoidable methane emissions.</p><p>SMACOM organises the chain from source to processing to farm, giving every participant visibility, better economics and measurable outcomes.</p></div>
         </div>
       </section>
 
-      <section className="py-24 md:py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-12">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#22c55e]">Partners & networks</span>
-              <h2 className="mt-3 text-3xl md:text-4xl font-bold text-slate-900 font-display">Built with organizations shaping the future of food and waste.</h2>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {PARTNERS.map((partner) => (
-              <div key={partner} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-5 text-center text-sm font-semibold text-slate-600">{partner}</div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 md:py-32 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="max-w-3xl mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#22c55e]">From the newsroom</span>
-            <h2 className="mt-4 text-4xl md:text-5xl font-bold text-slate-900 font-display text-balance">News and updates from the field.</h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {NEWS.map((item) => (
-              <article key={item.title} className="overflow-hidden rounded-3xl bg-white border border-slate-200 shadow-sm">
-                <img src={item.img} alt={item.title} loading="lazy" className="h-48 w-full object-cover" />
-                <div className="p-6">
-                  <div className="text-[11px] font-bold uppercase tracking-widest text-[#22c55e]">{item.tag}</div>
-                  <div className="mt-2 text-sm text-slate-500">{item.date}</div>
-                  <h3 className="mt-3 text-xl font-bold text-slate-900 font-display leading-snug">{item.title}</h3>
-                  <p className="mt-3 text-slate-600 leading-relaxed">{item.excerpt}</p>
+      <section className="bg-[#f7faf8] py-20 md:py-28" aria-labelledby="solutions-heading">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="max-w-3xl"><p className="eyebrow">Solutions for the value chain</p><h2 id="solutions-heading" className="section-heading mt-4">One infrastructure layer. Three practical entry points.</h2></div>
+          <div className="mt-12 grid gap-6 lg:grid-cols-3">
+            {SOLUTIONS.map((solution) => (
+              <article key={solution.title} className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#dfe9e4] bg-white shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-transform duration-300 hover:-translate-y-1">
+                <img src={solution.image} alt="" loading="lazy" className="aspect-[16/9] w-full object-cover" />
+                <div className="flex flex-1 flex-col p-7">
+                  <h3 className="text-2xl font-semibold tracking-tight text-[#0f172a]">{solution.title}</h3>
+                  <dl className="mt-6 space-y-4 text-sm leading-6"><div><dt className="font-semibold text-[#0f766e]">Who</dt><dd className="text-[#475569]">{solution.audience}</dd></div><div><dt className="font-semibold text-[#0f766e]">The problem</dt><dd className="text-[#475569]">{solution.problem}</dd></div><div><dt className="font-semibold text-[#0f766e]">What SMACOM provides</dt><dd className="text-[#475569]">{solution.provides}</dd></div><div><dt className="font-semibold text-[#0f766e]">Outcome</dt><dd className="text-[#475569]">{solution.outcome}</dd></div></dl>
+                  <Link to={solution.href} className="mt-7 inline-flex min-h-12 items-center gap-2 font-semibold text-[#0f766e] hover:text-[#0d9488]">{solution.title === 'Eco marketplace' ? 'Explore the marketplace' : `See how it works for ${solution.title}`}<ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></Link>
                 </div>
               </article>
             ))}
           </div>
         </div>
+      </section>
+
+      <section className="bg-white py-20 md:py-28" aria-labelledby="process-heading">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="max-w-3xl"><p className="eyebrow">How the system works</p><h2 id="process-heading" className="section-heading mt-4">From source to farm, one connected flow.</h2><p className="mt-5 text-lg leading-8 text-[#475569]">Follow the journey of organic material through the people, operations and decisions that give it a useful next life.</p></div>
+          <ol className="mt-12 grid gap-8 md:grid-cols-5 md:gap-4">{STEPS.map((step, index) => { const Icon = step.icon; return <li key={step.label} className="relative md:px-3 md:text-center"><div className="flex items-center gap-4 md:block"><div className="relative z-10 mx-auto grid h-14 w-14 shrink-0 place-items-center rounded-full bg-[#e7f3ef] text-[#0f766e] ring-8 ring-white"><Icon className="h-6 w-6" /></div><div><p className="mt-0 text-xs font-semibold uppercase tracking-widest text-[#f59e0b] md:mt-5">0{index + 1}</p><h3 className="mt-1 text-lg font-semibold text-[#0f172a]">{step.label}</h3></div></div><p className="mt-3 text-sm leading-6 text-[#64748b] md:mt-4">{step.description}</p>{index < STEPS.length - 1 && <div className="absolute left-7 top-14 hidden h-px w-[calc(100%-1.75rem)] bg-[#c9ddd6] md:block" />}</li>; })}</ol>
+        </div>
+      </section>
+
+      <section className="bg-[#134e4a] py-20 text-white md:py-28" aria-labelledby="platform-heading">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 lg:grid-cols-2 lg:px-8">
+          <div className="overflow-hidden rounded-2xl border border-white/15 bg-white/10"><img src={analytics} alt="SMACOM platform analytics interface" loading="lazy" className="aspect-[4/3] w-full object-cover" /><div className="grid grid-cols-2 gap-px bg-white/15"><div className="bg-[#134e4a] p-5"><BarChart3 className="h-5 w-5 text-[#f59e0b]" /><p className="mt-3 text-sm font-semibold">Operational records</p></div><div className="bg-[#134e4a] p-5"><LineChart className="h-5 w-5 text-[#f59e0b]" /><p className="mt-3 text-sm font-semibold">Decision support</p></div></div></div>
+          <div><p className="eyebrow eyebrow-dark">Platform and technology</p><h2 id="platform-heading" className="mt-4 text-3xl font-semibold leading-tight tracking-tight md:text-4xl">The operating layer for organic circular systems.</h2><p className="mt-6 text-lg leading-8 text-white/75">SMACOM combines the digital platform, monitoring tools, marketplace and reporting infrastructure needed to coordinate an organic value chain.</p><div className="mt-8 grid gap-5 sm:grid-cols-2">{PLATFORM_POINTS.map(([title, description]) => <div key={title} className="border-t border-white/20 pt-4"><p className="font-semibold text-white">{title}</p><p className="mt-2 text-sm leading-6 text-white/70">{description}</p></div>)}</div><Link to="/contact" className="mt-9 inline-flex min-h-12 items-center gap-2 rounded-lg bg-[#f59e0b] px-5 font-semibold text-[#0f172a] transition hover:bg-[#fbbf24]">Talk to the team <ArrowRight className="h-4 w-4" /></Link></div>
+        </div>
+      </section>
+
+      <section className="bg-[#f7faf8] py-20 md:py-24" aria-labelledby="impact-heading">
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-12 md:items-center lg:px-8"><div className="md:col-span-7"><p className="eyebrow">Impact and proof</p><h2 id="impact-heading" className="section-heading mt-4">Built for measurable progress, with evidence that can be reviewed.</h2><p className="mt-5 max-w-2xl text-lg leading-8 text-[#475569]">The platform is designed to help teams record activity, coordinate operations and build a clearer evidence base over time. Verified outcomes belong here when the supporting data and permissions are available.</p></div><div className="rounded-2xl border border-dashed border-[#9bbeb3] bg-white p-7 md:col-span-5"><p className="text-sm font-semibold uppercase tracking-widest text-[#0f766e]">Evidence-led by design</p><p className="mt-4 text-lg leading-8 text-[#475569]">No unverified statistics, testimonials or partner logos are presented on this page.</p></div></div>
       </section>
 
       <CtaBanner />
