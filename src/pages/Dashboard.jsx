@@ -5,19 +5,22 @@ import BioProcessorDashboard from '@/components/dashboards/BioProcessorDashboard
 import FarmerDashboard from '@/components/dashboards/FarmerDashboard';
 import LearnerDashboard from '@/components/dashboards/LearnerDashboard';
 import AdminDashboard from '@/components/dashboards/AdminDashboard';
+import InvalidRoleState from '@/components/InvalidRoleState';
+import { dashboardRoleFor, ROLES } from '@/lib/roles';
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const role = user?.role || 'waste_producer';
+  const role = dashboardRoleFor(user?.role);
 
   const dashboards = {
-    waste_producer: WasteProducerDashboard,
-    bio_processor: BioProcessorDashboard,
-    farmer: FarmerDashboard,
-    learner: LearnerDashboard,
-    admin: AdminDashboard,
+    [ROLES.WASTE_PRODUCER]: WasteProducerDashboard,
+    [ROLES.BIO_PROCESSOR]: BioProcessorDashboard,
+    [ROLES.FARMER]: FarmerDashboard,
+    [ROLES.LEARNER]: LearnerDashboard,
+    [ROLES.ADMIN]: AdminDashboard,
   };
 
-  const DashboardComponent = dashboards[role] || WasteProducerDashboard;
+  const DashboardComponent = role ? dashboards[role] : null;
+  if (!DashboardComponent) return <InvalidRoleState />;
   return <DashboardComponent user={user} />;
 }

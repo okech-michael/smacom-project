@@ -1,6 +1,7 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { apiClient } from '@/api/apiClient';
 import { appParams } from '@/lib/app-params';
+import { isValidRole } from '@/lib/roles';
 
 const AuthContext = createContext();
 
@@ -28,7 +29,7 @@ export const AuthProvider = ({ children }) => {
         const response = await fetch(`/api/apps/public/prod/public-settings/by-id/${appParams.appId}`, {
           headers: {
             'X-App-Id': appParams.appId,
-            ...(appParams.token ? { Authorization: `Bearer ${appParams.token}` } : {})
+            ...(apiClient.auth.getToken() ? { Authorization: `Bearer ${apiClient.auth.getToken()}` } : {})
           }
         });
         if (!response.ok) {
@@ -41,7 +42,7 @@ export const AuthProvider = ({ children }) => {
         setAppPublicSettings(publicSettings);
         
         // If we got the app public settings successfully, check if user is authenticated
-        if (appParams.token) {
+        if (apiClient.auth.getToken()) {
           await checkUserAuth();
         } else {
           setIsLoadingAuth(false);
@@ -91,11 +92,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const checkUserAuth = async () => {
+  const checkUserAuth = useCallback(async () => {
     try {
       // Now check if the user is authenticated
       setIsLoadingAuth(true);
       const currentUser = await apiClient.auth.me();
+      if (!isValidRole(currentUser?.role)) {
+        setAuthError({ type: 'invalid_role', message: 'Account role is invalid' });
+        setUser(null);
+        setIsAuthenticated(false);
+        setIsLoadingAuth(false);
+        setAuthChecked(true);
+        return;
+      }
       setUser(currentUser);
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
@@ -114,7 +123,7 @@ export const AuthProvider = ({ children }) => {
         });
       }
     }
-  };
+  }, []);
 
   const logout = (shouldRedirect = true) => {
     setUser(null);

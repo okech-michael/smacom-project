@@ -21,7 +21,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [otpCode, setOtpCode] = useState("");
-  const [selectedRole, setSelectedRole] = useState("learner");
+  const [selectedRole, setSelectedRole] = useState("");
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -35,16 +35,17 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    if (!selectedRole) {
+      setError("Choose a role to continue");
+      return;
+    }
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
     setLoading(true);
     try {
-      await apiClient.auth.register({ email, password });
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("pendingRole", selectedRole);
-      }
+      await apiClient.auth.register({ email, password, role: selectedRole });
       if (typeof window !== "undefined") {
         window.localStorage.setItem("pendingOtpEmail", email);
       }
@@ -66,12 +67,7 @@ export default function Register() {
         apiClient.auth.setToken(result.access_token);
       }
       if (typeof window !== "undefined") {
-        const pendingRole = window.localStorage.getItem("pendingRole");
         window.localStorage.removeItem("pendingOtpEmail");
-        window.localStorage.removeItem("pendingRole");
-        if (pendingRole) {
-          await apiClient.auth.updateMe({ role: pendingRole });
-        }
       }
       window.location.assign('/dashboard');
     } catch (err) {
@@ -95,7 +91,8 @@ export default function Register() {
   };
 
   const handleGoogle = () => {
-    apiClient.auth.loginWithProvider("google", "/");
+    if (!selectedRole) return;
+    apiClient.auth.loginWithProvider("google", "/", selectedRole);
   };
 
   if (showOtp) {
@@ -166,10 +163,13 @@ export default function Register() {
         </>
       }
     >
+      <RoleSelector selectedRole={selectedRole} onSelect={setSelectedRole} title="Choose your role" description="Select the role that best matches how you’ll use the platform." />
+
       <Button
         variant="outline"
-        className="w-full h-12 text-sm font-medium mb-6"
+        className="w-full h-12 text-sm font-medium my-6"
         onClick={handleGoogle}
+        disabled={!selectedRole}
       >
         <GoogleIcon className="w-5 h-5 mr-2" />
         Continue with Google
@@ -191,7 +191,6 @@ export default function Register() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <RoleSelector selectedRole={selectedRole} onSelect={setSelectedRole} title="Choose your role" description="Select the role that best matches how you’ll use the platform." />
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <div className="relative">
@@ -257,7 +256,7 @@ export default function Register() {
             </button>
           </div>
         </div>
-        <Button type="submit" className="w-full h-12 font-medium" disabled={loading}>
+        <Button type="submit" className="w-full h-12 font-medium" disabled={loading || !selectedRole}>
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />

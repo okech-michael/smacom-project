@@ -3,13 +3,14 @@ import { appParams } from '@/lib/app-params';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || appParams.appBaseUrl || '/api';
 const APP_ID = appParams.appId || 'smacom';
+const AUTH_TOKEN_KEY = 'token';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
 api.interceptors.request.use((config) => {
-  const token = typeof window !== 'undefined' ? window.localStorage?.getItem('token') : null;
+  const token = typeof window !== 'undefined' ? window.localStorage?.getItem(AUTH_TOKEN_KEY) : null;
   config.headers = config.headers || {};
   if (!(config.data instanceof FormData)) {
     config.headers['Content-Type'] = 'application/json';
@@ -45,8 +46,10 @@ const auth = {
     return result;
   },
 
-  loginWithProvider(provider, redirectUrl) {
-    window.location.href = `${API_BASE_URL}/auth/login/${provider}?redirect_url=${encodeURIComponent(redirectUrl)}`;
+  loginWithProvider(provider, redirectUrl, role = null) {
+    const query = new URLSearchParams({ redirect_url: redirectUrl });
+    if (role) query.set('role', role);
+    window.location.href = `${API_BASE_URL}/auth/login/${provider}?${query.toString()}`;
   },
 
   async register(payload) {
@@ -77,7 +80,10 @@ const auth = {
   },
 
   async resetPassword(payload) {
-    return api.post('/auth/reset-password', payload);
+    return api.post('/auth/reset-password', {
+      reset_token: payload.reset_token ?? payload.resetToken,
+      new_password: payload.new_password ?? payload.newPassword,
+    });
   },
 
   async updateMe(data) {
@@ -90,7 +96,7 @@ const auth = {
 
   logout(redirectUrl) {
     if (typeof window !== 'undefined') {
-      window.localStorage?.removeItem('token');
+      window.localStorage?.removeItem(AUTH_TOKEN_KEY);
     }
     if (redirectUrl) {
       window.location.href = redirectUrl;
@@ -105,14 +111,24 @@ const auth = {
 
   setToken(token, saveToStorage = true) {
     if (token && typeof window !== 'undefined' && saveToStorage) {
-      window.localStorage?.setItem('token', token);
+      window.localStorage?.setItem(AUTH_TOKEN_KEY, token);
     }
+  },
+
+  getToken() {
+    return typeof window !== 'undefined' ? window.localStorage?.getItem(AUTH_TOKEN_KEY) : null;
+  },
+};
+
+const users = {
+  async inviteUser(email, role) {
+    return api.post('/auth/admin/invite', { email, role });
   },
 };
 
 const createEntityAPI = (entityName) => ({
   async list(sort = '-created_date', limit = 100) {
-    return api.get(`/${entityName}`, { params: { sort, limit } });
+    return api.get(`/entities/${entityName}`, { params: { sort, limit } });
   },
 
   async filter(query = {}, sort = '-created_date', limit = 100, skip = 0, fields = null) {
@@ -120,23 +136,23 @@ const createEntityAPI = (entityName) => ({
     if (fields) {
       params.fields = Array.isArray(fields) ? fields.join(',') : fields;
     }
-    return api.post(`/${entityName}/filter`, query, { params });
+    return api.post(`/entities/${entityName}/filter`, query, { params });
   },
 
   async get(id) {
-    return api.get(`/${entityName}/${id}`);
+    return api.get(`/entities/${entityName}/${id}`);
   },
 
   async create(data) {
-    return api.post(`/${entityName}`, data);
+    return api.post(`/entities/${entityName}`, data);
   },
 
   async update(id, data) {
-    return api.patch(`/${entityName}/${id}`, data);
+    return api.patch(`/entities/${entityName}/${id}`, data);
   },
 
   async delete(id) {
-    return api.delete(`/${entityName}/${id}`);
+    return api.delete(`/entities/${entityName}/${id}`);
   },
 });
 
@@ -158,6 +174,7 @@ const integrations = {
 
 export const apiClient = {
   auth,
+  users,
   entities: {
     User: createEntityAPI('User'),
     WasteReport: createEntityAPI('WasteReport'),

@@ -3,10 +3,12 @@ import upload from '../middleware/upload.js';
 import { uploadFile } from '../config/storage.js';
 import dotenv from 'dotenv';
 import OpenAI from 'openai';
+import authMiddleware from '../middleware/auth.js';
 
 dotenv.config();
 
 const router = express.Router();
+router.use(authMiddleware);
 const openaiKey = process.env.OPENAI_API_KEY;
 const openai = openaiKey ? new OpenAI({ apiKey: openaiKey }) : null;
 

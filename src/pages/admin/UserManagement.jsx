@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Search, Check, X, Ban, UserPlus, Loader2 } from 'lucide-react';
+import { Search, Check, Ban, UserPlus, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
@@ -39,8 +39,7 @@ export default function UserManagement() {
 
   const inviteMutation = useMutation({
     mutationFn: async () => {
-      const role = inviteRole === 'admin' ? 'admin' : 'user';
-      await apiClient.users.inviteUser(inviteEmail, role);
+      await apiClient.users.inviteUser(inviteEmail, inviteRole);
     },
     onSuccess: () => {
       setInviteOpen(false);
