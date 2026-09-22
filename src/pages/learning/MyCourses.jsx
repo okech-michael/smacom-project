@@ -29,7 +29,7 @@ export default function MyCourses() {
     <div>
       <PageHeader title="My Courses" description="Track your learning progress." />
       {enrollments.length === 0 ? (
-        <EmptyState icon={BookOpen} title="No courses enrolled" description="Browse the course catalog to start learning." actionLabel="Browse Courses" onAction={() => window.location.href = '/learning'} />
+        <EmptyState icon={BookOpen} title="No courses enrolled" description="Browse the course catalog to start learning." actionLabel="Browse Courses" onAction={() => window.location.href = '/learning/catalog'} />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {enrollments.map(enrollment => {

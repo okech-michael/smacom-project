@@ -32,7 +32,7 @@ export default function LearnerDashboard({ user }) {
         title={`Welcome back, ${user?.full_name?.split(' ')[0] || 'Learner'}`}
         description="Continue your learning journey in sustainability."
         actions={
-          <Link to="/learning">
+          <Link to="/learning/catalog">
             <Button><BookOpen className="w-4 h-4 mr-2" />Browse Courses</Button>
           </Link>
         }
@@ -78,7 +78,7 @@ export default function LearnerDashboard({ user }) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-base font-semibold">Recommended Courses</CardTitle>
-            <Link to="/learning" className="text-xs text-primary hover:underline flex items-center gap-1">
+            <Link to="/learning/catalog" className="text-xs text-primary hover:underline flex items-center gap-1">
               View all <ArrowRight className="w-3 h-3" />
             </Link>
           </CardHeader>

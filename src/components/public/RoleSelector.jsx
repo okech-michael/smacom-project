@@ -1,12 +1,12 @@
 import React from 'react';
-import { Trash2, Recycle, Sprout, GraduationCap, ShieldCheck } from 'lucide-react';
+import { Trash2, Recycle, Sprout, GraduationCap } from 'lucide-react';
+import { PUBLIC_REGISTRATION_ROLES, ROLE_LABELS, ROLES } from '@/lib/roles';
 
 const roles = [
-  { value: 'waste_producer', label: 'Waste Producer', description: 'Report waste, schedule pickups, and earn credits.', icon: Trash2 },
-  { value: 'bio_processor', label: 'Bio Processor', description: 'Manage processing operations and inventory.', icon: Recycle },
-  { value: 'farmer', label: 'Farmer', description: 'Access the marketplace and sustainability tools.', icon: Sprout },
-  { value: 'learner', label: 'Learner', description: 'Join learning tracks and earn certificates.', icon: GraduationCap },
-  { value: 'admin', label: 'Administrator', description: 'Manage platform operations and users.', icon: ShieldCheck },
+  { value: ROLES.WASTE_PRODUCER, description: 'Report waste, schedule pickups, and earn credits.', icon: Trash2 },
+  { value: ROLES.BIO_PROCESSOR, description: 'Manage processing operations and inventory.', icon: Recycle },
+  { value: ROLES.FARMER, description: 'Access the marketplace and sustainability tools.', icon: Sprout },
+  { value: ROLES.LEARNER, description: 'Join learning tracks and earn certificates.', icon: GraduationCap },
 ];
 
 export default function RoleSelector({ selectedRole, onSelect, title = 'Choose your role', description = 'Select the role that best describes you.' }) {
@@ -18,7 +18,7 @@ export default function RoleSelector({ selectedRole, onSelect, title = 'Choose y
       </div>
 
       <div className="grid gap-3">
-        {roles.map((role) => {
+        {roles.filter((role) => PUBLIC_REGISTRATION_ROLES.includes(role.value)).map((role) => {
           const Icon = role.icon;
           const active = selectedRole === role.value;
           return (
@@ -34,7 +34,7 @@ export default function RoleSelector({ selectedRole, onSelect, title = 'Choose y
                 <Icon className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">{role.label}</p>
+                <p className="text-sm font-semibold text-foreground">{ROLE_LABELS[role.value]}</p>
                 <p className="text-sm text-muted-foreground">{role.description}</p>
               </div>
             </button>

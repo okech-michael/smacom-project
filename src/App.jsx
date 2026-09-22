@@ -52,16 +52,15 @@ import AdminEnvironment from '@/pages/admin/AdminEnvironment';
 import AdminAnalytics from '@/pages/admin/AdminAnalytics';
 import AdminMarketplace from '@/pages/admin/AdminMarketplace';
 import AdminCourses from '@/pages/admin/AdminCourses';
+import UnauthorizedState from '@/components/UnauthorizedState';
+import { ROLES } from '@/lib/roles';
 
 const AuthenticatedApp = () => {
-  const { authError, navigateToLogin } = useAuth();
+  const { authError } = useAuth();
 
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      navigateToLogin();
-      return null;
     }
   }
 
@@ -81,6 +80,7 @@ const AuthenticatedApp = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/unauthorized" element={<UnauthorizedState />} />
 
       {/* Protected routes */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
@@ -88,38 +88,38 @@ const AuthenticatedApp = () => {
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
 
-          <Route element={<RoleProtectedRoute allowedRoles={['waste_producer']} redirectTo="/dashboard" />}>
+          <Route element={<RoleProtectedRoute allowedRoles={[ROLES.WASTE_PRODUCER]} />}>
             <Route path="/waste/report" element={<ReportWaste />} />
             <Route path="/waste/pickups" element={<MyPickups />} />
             <Route path="/wallet" element={<Wallet />} />
           </Route>
 
-          <Route element={<RoleProtectedRoute allowedRoles={['farmer', 'waste_producer']} redirectTo="/dashboard" />}>
+          <Route element={<RoleProtectedRoute allowedRoles={[ROLES.FARMER, ROLES.WASTE_PRODUCER]} />}>
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/marketplace/product/:id" element={<ProductDetail />} />
             <Route path="/orders" element={<Orders />} />
           </Route>
 
-          <Route element={<RoleProtectedRoute allowedRoles={['learner', 'farmer', 'waste_producer', 'bio_processor', 'admin']} redirectTo="/dashboard" />}>
+          <Route element={<RoleProtectedRoute allowedRoles={[ROLES.LEARNER, ROLES.FARMER, ROLES.WASTE_PRODUCER, ROLES.BIO_PROCESSOR, ROLES.ADMIN]} />}>
             <Route path="/learning/catalog" element={<CourseCatalog />} />
             <Route path="/learning/course/:id" element={<CourseDetail />} />
             <Route path="/learning/my-courses" element={<MyCourses />} />
             <Route path="/learning/certificates" element={<Certificates />} />
           </Route>
 
-          <Route element={<RoleProtectedRoute allowedRoles={['bio_processor']} redirectTo="/dashboard" />}>
+          <Route element={<RoleProtectedRoute allowedRoles={[ROLES.BIO_PROCESSOR]} />}>
             <Route path="/processor/pickups" element={<PickupRequests />} />
             <Route path="/processor/inventory" element={<InventoryPage />} />
             <Route path="/processor/products" element={<ProcessorProducts />} />
             <Route path="/processor/earnings" element={<Earnings />} />
           </Route>
 
-          <Route element={<RoleProtectedRoute allowedRoles={['waste_producer', 'bio_processor', 'farmer', 'learner', 'admin']} redirectTo="/dashboard" />}>
+          <Route element={<RoleProtectedRoute allowedRoles={[ROLES.WASTE_PRODUCER, ROLES.BIO_PROCESSOR, ROLES.FARMER, ROLES.LEARNER, ROLES.ADMIN]} />}>
             <Route path="/ai-advisor" element={<AIAdvisor />} />
             <Route path="/iot" element={<IoTDashboard />} />
           </Route>
 
-          <Route element={<RoleProtectedRoute allowedRoles={['admin']} redirectTo="/dashboard" />}>
+          <Route element={<RoleProtectedRoute allowedRoles={[ROLES.ADMIN]} />}>
             <Route path="/admin/users" element={<UserManagement />} />
             <Route path="/admin/waste" element={<AdminWaste />} />
             <Route path="/admin/marketplace" element={<AdminMarketplace />} />

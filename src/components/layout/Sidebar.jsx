@@ -5,10 +5,10 @@ import {
   LayoutDashboard, Trash2, ShoppingCart, GraduationCap, Users,
   Settings, Bell, Package, MapPin, Cpu, BarChart3, CreditCard,
   Leaf, TrendingUp, BookOpen, ShoppingBag, Truck, Wallet,
-  Award, ChevronLeft, ChevronRight, LogOut, Menu, X
+  Award, ChevronLeft, ChevronRight, LogOut, X
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { apiClient } from '@/api/apiClient';
+import { dashboardRoleFor, ROLE_LABELS } from '@/lib/roles';
 
 const roleNavItems = {
   waste_producer: [
@@ -17,7 +17,7 @@ const roleNavItems = {
     { label: 'My Pickups', path: '/waste/pickups', icon: Truck },
     { label: 'Credits Wallet', path: '/wallet', icon: Wallet },
     { label: 'Eco Marketplace', path: '/marketplace', icon: ShoppingCart },
-    { label: 'Learning', path: '/learning', icon: GraduationCap },
+    { label: 'Learning', path: '/learning/catalog', icon: GraduationCap },
     { label: 'Notifications', path: '/notifications', icon: Bell },
   ],
   bio_processor: [
@@ -34,12 +34,12 @@ const roleNavItems = {
     { label: 'Eco Marketplace', path: '/marketplace', icon: ShoppingCart },
     { label: 'My Orders', path: '/orders', icon: ShoppingBag },
     { label: 'AI Advisor', path: '/ai-advisor', icon: Leaf },
-    { label: 'Learning', path: '/learning', icon: GraduationCap },
+    { label: 'Learning', path: '/learning/catalog', icon: GraduationCap },
     { label: 'Notifications', path: '/notifications', icon: Bell },
   ],
   learner: [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { label: 'Courses', path: '/learning', icon: GraduationCap },
+    { label: 'Courses', path: '/learning/catalog', icon: GraduationCap },
     { label: 'My Courses', path: '/learning/my-courses', icon: BookOpen },
     { label: 'Certificates', path: '/learning/certificates', icon: Award },
     { label: 'Notifications', path: '/notifications', icon: Bell },
@@ -60,8 +60,8 @@ const roleNavItems = {
 
 export default function Sidebar({ user, collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
   const location = useLocation();
-  const role = user?.role || 'waste_producer';
-  const items = roleNavItems[role] || roleNavItems.waste_producer;
+  const role = dashboardRoleFor(user?.role);
+  const items = role ? roleNavItems[role] || [] : [];
 
   const handleLogout = () => {
     apiClient.auth.logout('/login');
@@ -115,7 +115,7 @@ export default function Sidebar({ user, collapsed, setCollapsed, mobileOpen, set
             </div>
             <div className="overflow-hidden">
               <p className="text-xs font-medium text-sidebar-foreground truncate">{user?.full_name || 'User'}</p>
-              <p className="text-[10px] text-sidebar-foreground/50 capitalize">{role.replace('_', ' ')}</p>
+              <p className="text-[10px] text-sidebar-foreground/50">{ROLE_LABELS[role] || 'Unknown role'}</p>
             </div>
           </div>
         )}

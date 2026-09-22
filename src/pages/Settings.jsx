@@ -29,7 +29,7 @@ export default function Settings() {
   }, [user]);
 
   const updateMutation = useMutation({
-    mutationFn: (data) => apiClient.auth.updateMe(data),
+    mutationFn: () => apiClient.auth.updateMe({ full_name: user?.full_name || '' }),
     onSuccess: () => toast.success('Profile updated'),
   });
 
