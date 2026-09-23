@@ -185,30 +185,35 @@ const getOAuthContext = (req, value) => {
 const createOAuthState = (payload) => jwt.sign(payload, jwtSecret, { expiresIn: '10m' });
 const verifyOAuthState = (state) => jwt.verify(state, jwtSecret);
 
-router.get('/login/:provider', async (req, res) => {
-  const { provider } = req.params;
-  const { redirectUrl, callbackUri } = getOAuthContext(req, req.query.redirect_url);
-  if (provider !== 'google') {
-    return res.redirect(`${redirectUrl}?auth_error=provider_not_supported`);
-  }
-  if (!googleClient) {
-    return res.redirect(`${redirectUrl}?auth_error=google_not_configured`);
-  }
+router.get('/login/:provider', (req, res) => {
+  try {
+    const { provider } = req.params;
+    const { redirectUrl, callbackUri } = getOAuthContext(req, req.query.redirect_url);
+    if (provider !== 'google') {
+      return res.redirect(`${redirectUrl}?auth_error=provider_not_supported`);
+    }
+    if (!googleClient) {
+      return res.redirect(`${redirectUrl}?auth_error=google_not_configured`);
+    }
 
-  const requestedRole = req.query.role;
-  const state = createOAuthState({
-    redirectUrl,
-    callbackUri,
-    role: isPublicRegistrationRole(requestedRole) ? requestedRole : null,
-  });
-  const authorizationUrl = googleClient.generateAuthUrl({
-    access_type: 'online',
-    redirect_uri: callbackUri,
-    scope: ['openid', 'email', 'profile'],
-    state,
-    prompt: 'select_account',
-  });
-  return res.redirect(authorizationUrl);
+    const requestedRole = req.query.role;
+    const state = createOAuthState({
+      redirectUrl,
+      callbackUri,
+      role: isPublicRegistrationRole(requestedRole) ? requestedRole : null,
+    });
+    const authorizationUrl = googleClient.generateAuthUrl({
+      access_type: 'online',
+      redirect_uri: callbackUri,
+      scope: ['openid', 'email', 'profile'],
+      state,
+      prompt: 'select_account',
+    });
+    res.status(302).set('Location', authorizationUrl).end();
+  } catch (error) {
+    console.error('Google OAuth start failed:', error?.message || error);
+    return res.status(500).json({ error: 'Google OAuth is not configured correctly' });
+  }
 });
 
 router.get('/login/google/callback', async (req, res) => {
